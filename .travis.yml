@@ -1,0 +1,12 @@
+language: go
+
+go:
+- "1.10"
+
+go_import_path: github.com/container-mgmt/messaging-library
+
+install:
+- go get github.com/golang/dep/cmd/dep
+
+script:
+- make
