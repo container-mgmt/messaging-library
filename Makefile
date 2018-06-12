@@ -16,6 +16,7 @@
 
 # This Makefile is just a wrapper calling the 'build' script, for those used
 # to just run 'make'.
+SOURCE := pkg/*/*.go
 
 .PHONY: packages
 packages:
@@ -24,3 +25,15 @@ packages:
 .PHONY: clean
 clean:
 	rm -rf .gopath vendor
+
+.PHONY: fmt
+fmt: $(SOURCE)
+	gofmt -s -l -w $(SOURCE)
+
+.PHONY: lint
+lint: $(SOURCE)
+	golint -min_confidence 0.9 pkg/...
+
+.PHONY: test-unit
+test-unit:
+	go test $(shell go list ./... | grep -v vendor)
