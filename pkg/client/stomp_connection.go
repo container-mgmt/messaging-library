@@ -35,8 +35,8 @@ type StompConnection struct {
 	connection      *stomp.Conn
 }
 
-// Connect creates a ne connection to the messaging broker.
-func (c *StompConnection) Connect() (err error) {
+// Open creates a new connection to the messaging broker.
+func (c *StompConnection) Open() (err error) {
 	// Calculate the address of the server, as required by the Dial methods:
 	brokerAddress := fmt.Sprintf("%s:%d", c.BrokerHost, c.BrokerPort)
 
@@ -90,8 +90,8 @@ func (c *StompConnection) Connect() (err error) {
 	return
 }
 
-// Disconnect closes the connection, releasing all the resources that it uses. Once closed the
+// Close closes the connection, releasing all the resources that it uses. Once closed the
 // connection can't be reused.
-func (c *StompConnection) Disconnect() (err error) {
+func (c *StompConnection) Close() (err error) {
 	return c.connection.Disconnect()
 }
