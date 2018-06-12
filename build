@@ -247,6 +247,45 @@ def ensure_vendor_dir():
 
 
 @cache
+def ensure_package_paths():
+    """
+    Returns the list of import paths of the packages of the project.
+    """
+    # Create an import path for each subdirectory of the 'pkg' directory that
+    # contains at least one Go source file:
+    project_dir = ensure_project_dir()
+    pkg_dir = os.path.join(project_dir, "pkg")
+    pkg_paths = []
+    for root, _, names in os.walk(pkg_dir):
+        if any([name.endswith(".go") for name in names]):
+            rel_dir = os.path.relpath(root, project_dir)
+            rel_path = rel_dir.replace(os.sep, "/")
+            pkg_path = IMPORT_PATH + "/" + rel_path
+            pkg_paths.append(pkg_path)
+
+    # Sort the import paths, for predictable behaviour:
+    pkg_paths.sort()
+
+    return pkg_paths
+
+
+@cache
+def ensure_source_files():
+    """
+    Returns the list of source files of the project.
+    """
+    # Find all the Go files in the 'pkg' directory:
+    project_dir = ensure_project_dir()
+    pkg_dir = os.path.join(project_dir, "pkg")
+    src_files = find_paths(pkg_dir, "\\.go$")
+
+    # Sort the paths, for predictable behaviour:
+    src_files.sort()
+
+    return src_files
+
+
+@cache
 def ensure_packages():
     """
     Builds all the packages of the project.
@@ -254,28 +293,40 @@ def ensure_packages():
     # Make sure that the vendor directory is populated:
     ensure_vendor_dir()
 
-    # Get the names of the subdirectories of the 'pkg' directory:
-    project_dir = ensure_project_dir()
-    pkg_dir = os.path.join(project_dir, 'pkg')
-    pkg_names = []
-    for pkg_name in os.listdir(pkg_dir):
-        pkg_path = os.path.join(pkg_dir, pkg_name)
-        if os.path.isdir(pkg_path):
-            pkg_names.append(pkg_name)
-    pkg_names.sort()
-
     # Build the packages:
-    for pkg_name in pkg_names:
-        say("Building package '%s'" % pkg_name)
-        pkg_path = "{path}/pkg/{name}".format(path=IMPORT_PATH, name=pkg_name)
-        go_tool("go", "install", pkg_path)
+    pkg_paths = ensure_package_paths()
+    go_tool("go", "install", *pkg_paths)
 
 
-def build_packages():
+def build():
     """
     Implements the 'packages' subcommand.
     """
     ensure_packages()
+
+
+def test():
+    """
+    Runs the unit tests.
+    """
+    pkg_paths = ensure_package_paths()
+    go_tool("go", "test", *pkg_paths)
+
+
+def lint():
+    """
+    Runs the 'golint' tool on all the source files.
+    """
+    pkg_paths = ensure_package_paths()
+    go_tool("golint", "-min_confidence", "0.9", *pkg_paths)
+
+
+def fmt():
+    """
+    Formats all the source files of the project using the 'gofmt' tool.
+    """
+    src_files = ensure_source_files()
+    go_tool("gofmt", "-s", "-l", "-w", *src_files)
 
 
 def main():
@@ -298,9 +349,21 @@ def main():
     )
     subparsers = parser.add_subparsers()
 
-    # Create the parser for the 'packages' command:
-    packages_parser = subparsers.add_parser("packages")
-    packages_parser.set_defaults(func=build_packages)
+    # Create the parser for the 'build' command:
+    build_parser = subparsers.add_parser("build")
+    build_parser.set_defaults(func=build)
+
+    # Create the parser for the 'test' command:
+    test_parser = subparsers.add_parser("test")
+    test_parser.set_defaults(func=test)
+
+    # Create the parser for the 'lint' command:
+    lint_parser = subparsers.add_parser("lint")
+    lint_parser.set_defaults(func=lint)
+
+    # Create the parser for the 'fmt' command:
+    fmt_parser = subparsers.add_parser("fmt")
+    fmt_parser.set_defaults(func=fmt)
 
     # Run the selected tool:
     code = 0
