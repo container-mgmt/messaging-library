@@ -25,9 +25,9 @@ package client
 // The connection may consume expensive resources, like TCP connections, or file descriptors, so it
 // is important to reuse it as much as possible, and to close it once it is no longer needed.
 type Connection interface {
-	// Connect creates a ne connection to the messaging broker.
-	Connect() error
-	// Disconnect closes the connection, releasing all the resources that it uses. Once closed the
+	// Open creates a new connection to the messaging broker.
+	Open() error
+	// Close closes the connection, releasing all the resources that it uses. Once closed the
 	// connection can't be reused.
-	Disconnect() error
+	Close() error
 }
