@@ -27,7 +27,7 @@ package client
 type Connection interface {
 	// Connect creates a ne connection to the messaging broker.
 	Connect() error
-	// Close closes the connection, releasing all the resources that it uses. Once closed the
+	// Disconnect closes the connection, releasing all the resources that it uses. Once closed the
 	// connection can't be reused.
-	Close() error
+	Disconnect() error
 }
