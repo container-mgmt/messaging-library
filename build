@@ -298,11 +298,53 @@ def ensure_packages():
     go_tool("go", "install", *pkg_paths)
 
 
+@cache
+def ensure_binaries():
+    """
+    Builds the binaries corresponding to each subdirectory of the 'cmd'
+    directory. Returns a list containing the absolute path names of the
+    generated binaries.
+    """
+    # Make sure that the vendor directory is populated:
+    ensure_vendor_dir()
+
+    # Get the names of the subdirectories of the 'cmd' directory:
+    project_dir = ensure_project_dir()
+    cmd_dir = os.path.join(project_dir, 'cmd')
+    cmd_names = []
+    for cmd_name in os.listdir(cmd_dir):
+        cmd_path = os.path.join(cmd_dir, cmd_name)
+        if os.path.isdir(cmd_path):
+            cmd_names.append(cmd_name)
+    cmd_names.sort()
+
+    # Build the binaries:
+    for cmd_name in cmd_names:
+        say("Building binary '{name}'".format(name=cmd_name))
+        cmd_path = "{path}/cmd/{name}".format(path=IMPORT_PATH, name=cmd_name)
+    go_tool("go", "install", cmd_path)
+
+    # Build the result:
+    go_bin = ensure_go_bin()
+    result = []
+    for cmd_name in cmd_names:
+        cmd_path = os.path.join(go_bin, cmd_name)
+        result.append(cmd_path)
+    return result
+
+
 def build():
     """
     Implements the 'packages' subcommand.
     """
     ensure_packages()
+
+
+def build_binaries():
+    """
+    Implements the 'binaries' subcommand.
+    """
+    ensure_binaries()
 
 
 def test():
@@ -364,6 +406,10 @@ def main():
     # Create the parser for the 'fmt' command:
     fmt_parser = subparsers.add_parser("fmt")
     fmt_parser.set_defaults(func=fmt)
+
+    # Create the parser for the 'binaries' command:
+    binaries_parser = subparsers.add_parser("binaries")
+    binaries_parser.set_defaults(func=build_binaries)
 
     # Run the selected tool:
     code = 0
