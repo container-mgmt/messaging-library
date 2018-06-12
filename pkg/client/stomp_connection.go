@@ -25,33 +25,33 @@ import (
 // StompConnection is an implementation of Connection interface
 type StompConnection struct {
 	// Global options:
-	brokerHost      string
-	brokerPort      int
-	destinationName string
-	userName        string
-	userPassword    string
-	useTLS          bool
-	insecureTLS     bool
+	BrokerHost      string
+	BrokerPort      int
+	DestinationName string
+	UserName        string
+	UserPassword    string
+	UseTLS          bool
+	InsecureTLS     bool
 	connection      *stomp.Conn
 }
 
 // Connect creates a ne connection to the messaging broker.
 func (c *StompConnection) Connect() (err error) {
 	// Calculate the address of the server, as required by the Dial methods:
-	brokerAddress := fmt.Sprintf("%s:%d", c.brokerHost, c.brokerPort)
+	brokerAddress := fmt.Sprintf("%s:%d", c.BrokerHost, c.BrokerPort)
 
 	// Create the socket:
 	var socket io.ReadWriteCloser
-	if c.useTLS {
+	if c.UseTLS {
 		socket, err = tls.Dial("tcp", brokerAddress, &tls.Config{
-			ServerName:         c.brokerHost,
-			InsecureSkipVerify: c.insecureTLS,
+			ServerName:         c.BrokerHost,
+			InsecureSkipVerify: c.InsecureTLS,
 		})
 		if err != nil {
 			err = fmt.Errorf(
 				"can't create TLS connection to host '%s' and port %d: %s",
-				c.brokerHost,
-				c.brokerPort,
+				c.BrokerHost,
+				c.BrokerPort,
 				err.Error(),
 			)
 			return
@@ -61,8 +61,8 @@ func (c *StompConnection) Connect() (err error) {
 		if err != nil {
 			err = fmt.Errorf(
 				"can't create TCP connection to host '%s' and port %d: %s",
-				c.brokerHost,
-				c.brokerPort,
+				c.BrokerHost,
+				c.BrokerPort,
 				err.Error(),
 			)
 			return
@@ -71,8 +71,8 @@ func (c *StompConnection) Connect() (err error) {
 
 	// Prepare the options:
 	options := make([]func(*stomp.Conn) error, 0)
-	if c.userName != "" {
-		options = append(options, stomp.ConnOpt.Login(c.userName, c.userPassword))
+	if c.UserName != "" {
+		options = append(options, stomp.ConnOpt.Login(c.UserName, c.UserPassword))
 	}
 
 	// Create the STOMP connection:
@@ -80,8 +80,8 @@ func (c *StompConnection) Connect() (err error) {
 	if err != nil {
 		err = fmt.Errorf(
 			"can't create STOMP connection to host '%s' and port %d: %s",
-			c.brokerHost,
-			c.brokerPort,
+			c.BrokerHost,
+			c.BrokerPort,
 			err.Error(),
 		)
 		return
