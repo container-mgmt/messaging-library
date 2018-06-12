@@ -322,7 +322,7 @@ def ensure_binaries():
     for cmd_name in cmd_names:
         say("Building binary '{name}'".format(name=cmd_name))
         cmd_path = "{path}/cmd/{name}".format(path=IMPORT_PATH, name=cmd_name)
-    go_tool("go", "install", cmd_path)
+        go_tool("go", "install", cmd_path)
 
     # Build the result:
     go_bin = ensure_go_bin()
