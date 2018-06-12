@@ -19,6 +19,5 @@ package client
 type Message struct {
 	ContentType string
 	Body        string
-	Count       int
 	ID          string
 }
