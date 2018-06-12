@@ -90,8 +90,8 @@ func (c *StompConnection) Connect() (err error) {
 	return
 }
 
-// Close closes the connection, releasing all the resources that it uses. Once closed the
+// Disconnect closes the connection, releasing all the resources that it uses. Once closed the
 // connection can't be reused.
-func (c *StompConnection) Close() (err error) {
+func (c *StompConnection) Disconnect() (err error) {
 	return c.connection.Disconnect()
 }
