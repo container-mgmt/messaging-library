@@ -21,6 +21,10 @@
 build:
 	./build build
 
+.PHONY: binaries
+binaries:
+	./build binaries
+
 .PHONY: lint
 lint:
 	./build lint
