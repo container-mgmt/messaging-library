@@ -17,8 +17,8 @@ package client
 
 // Message is an implementation of Message interface
 type Message struct {
-	contentType  string
-	messageBody  string
-	messageCount int
-	messageID    string
+	ContentType  string
+	MessageBody  string
+	MessageCount int
+	MessageID    string
 }
