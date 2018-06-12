@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// This package contains the types and functions used to communicate with other services using
+// Package client contains the types and functions used to communicate with other services using
 // queues and topics.
 package client
 
