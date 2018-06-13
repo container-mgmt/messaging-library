@@ -413,18 +413,15 @@ def main():
 
     # Run the selected tool:
     code = 0
-    try:
-        if len(sys.argv) > 0 and sys.argv[1] in DIRECT_TOOLS:
-            go_tool(*sys.argv[1:])
-        else:
-            global argv
-            argv = parser.parse_args()
-            if not hasattr(argv, "func"):
-                parser.print_usage()
-                code = 1
-            argv.func()
-    except Exception as error:
-        say(str(error))
+    if len(sys.argv) > 0 and sys.argv[1] in DIRECT_TOOLS:
+        go_tool(*sys.argv[1:])
+    else:
+        global argv
+        argv = parser.parse_args()
+        if not hasattr(argv, "func"):
+            parser.print_usage()
+            code = 1
+        argv.func()
 
     # Bye:
     sys.exit(code)
