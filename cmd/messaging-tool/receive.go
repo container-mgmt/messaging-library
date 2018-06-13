@@ -21,7 +21,10 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/container-mgmt/messaging-library/pkg/client"
-	"github.com/container-mgmt/messaging-library/pkg/client/connections/stomp"
+	// In this example we will use the stomp backand,
+	// last connection imported will be the default connection for the client.
+	// a client can overide default connection by using the Use method.
+	_ "github.com/container-mgmt/messaging-library/pkg/connections/stomp"
 )
 
 var receiveCmd = &cobra.Command{
@@ -42,7 +45,8 @@ func callback(m client.Message, topic string) (err error) {
 }
 
 func runReceive(cmd *cobra.Command, args []string) {
-	var c client.Connection
+	var cli client.Client
+	var con client.Connection
 
 	// Check mandatory arguments:
 	if destinationName == "" {
@@ -50,18 +54,18 @@ func runReceive(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	c = &stomp.Connection{
-		// Global options:
-		BrokerHost:   brokerHost,
-		BrokerPort:   brokerPort,
-		UserName:     userName,
-		UserPassword: userPassword,
-		UseTLS:       useTLS,
-		InsecureTLS:  insecureTLS,
-	}
+	// Build a new connection.
+	con = cli.NewConnectionBuilder().
+		BrokerHost(brokerHost).
+		BrokerPort(brokerPort).
+		UserName(userName).
+		UserPassword(userPassword).
+		UseTLS(useTLS).
+		InsecureTLS(insecureTLS).
+		Build()
 
 	// Connect to the messaging service:
-	err := c.Open()
+	err := con.Open()
 	if err != nil {
 		glog.Errorf(
 			"Can't connect to message broker at host '%s' and port %d: %s",
@@ -71,7 +75,7 @@ func runReceive(cmd *cobra.Command, args []string) {
 		)
 		return
 	}
-	defer c.Close()
+	defer con.Close()
 	glog.Errorf(
 		"Connected to message broker at host '%s' and port %d",
 		brokerHost,
@@ -79,7 +83,7 @@ func runReceive(cmd *cobra.Command, args []string) {
 	)
 
 	// Receive messages:
-	err = c.Subscribe(destinationName, callback)
+	err = con.Subscribe(destinationName, callback)
 	if err != nil {
 		glog.Errorf(
 			"Can't subscribe to destination '%s': %s",

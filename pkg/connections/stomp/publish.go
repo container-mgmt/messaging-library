@@ -19,26 +19,17 @@ import (
 	"github.com/container-mgmt/messaging-library/pkg/client"
 )
 
-// Subscribe subscribes to a topic
-func (c *Connection) Subscribe(topic string, callback func(m client.Message, topic string) error) (err error) {
-	var subscription *stomp.Subscription
+// Publish a message to a topic
+func (c Connection) Publish(m client.Message, topic string) (err error) {
+	body := []byte(m.Body)
+	contentType := m.ContentType
 
-	// Receive messages:
-	subscription, err = c.connection.Subscribe(topic, stomp.AckAuto)
-	if err != nil {
-		// TODO: error
-		return
-	}
-
-	// Wait for messages:
-	for message := range subscription.C {
-		if message.Err != nil {
-			// TODO: error ?
-			break
-		}
-
-		callback(client.Message{Body: string(message.Body)}, topic)
-	}
+	err = c.connection.Send(
+		topic,
+		contentType,
+		body,
+		stomp.SendOpt.Header("persistent", "true"),
+	)
 
 	return
 }
