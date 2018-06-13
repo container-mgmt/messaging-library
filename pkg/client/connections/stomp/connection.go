@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package client
+package stomp
 
 import (
 	"crypto/tls"
@@ -22,21 +22,20 @@ import (
 	"github.com/go-stomp/stomp"
 )
 
-// StompConnection is an implementation of Connection interface
-type StompConnection struct {
+// Connection is an implementation of Connection interface
+type Connection struct {
 	// Global options:
-	BrokerHost      string
-	BrokerPort      int
-	DestinationName string
-	UserName        string
-	UserPassword    string
-	UseTLS          bool
-	InsecureTLS     bool
-	connection      *stomp.Conn
+	BrokerHost   string
+	BrokerPort   int
+	UserName     string
+	UserPassword string
+	UseTLS       bool
+	InsecureTLS  bool
+	connection   *stomp.Conn
 }
 
 // Open creates a new connection to the messaging broker.
-func (c *StompConnection) Open() (err error) {
+func (c *Connection) Open() (err error) {
 	// Calculate the address of the server, as required by the Dial methods:
 	brokerAddress := fmt.Sprintf("%s:%d", c.BrokerHost, c.BrokerPort)
 
@@ -70,7 +69,7 @@ func (c *StompConnection) Open() (err error) {
 	}
 
 	// Prepare the options:
-	options := make([]func(*stomp.Conn) error, 0)
+	var options []func(*stomp.Conn) error
 	if c.UserName != "" {
 		options = append(options, stomp.ConnOpt.Login(c.UserName, c.UserPassword))
 	}
@@ -92,6 +91,6 @@ func (c *StompConnection) Open() (err error) {
 
 // Close closes the connection, releasing all the resources that it uses. Once closed the
 // connection can't be reused.
-func (c *StompConnection) Close() (err error) {
+func (c *Connection) Close() (err error) {
 	return c.connection.Disconnect()
 }

@@ -30,4 +30,8 @@ type Connection interface {
 	// Close closes the connection, releasing all the resources that it uses. Once closed the
 	// connection can't be reused.
 	Close() error
+
+	// Publish / Subscribe interface
+	Publish(m Message, topic string) error
+	Subscribe(topic string, callback func(m Message, topic string) error) error
 }
