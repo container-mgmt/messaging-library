@@ -11,3 +11,4 @@ install:
 
 script:
 - make build test lint
+- make binaries
