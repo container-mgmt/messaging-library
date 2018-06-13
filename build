@@ -55,9 +55,7 @@ def say(what):
     Writes a message to the standard output, and then flushes it, so that
     the output doesn't appear out of order.
     """
-    sys.stdout.write(what)
-    sys.stdout.write("\n")
-    sys.stdout.flush()
+    print(what, flush=True)
 
 
 def cache(function):
