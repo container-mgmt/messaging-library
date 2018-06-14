@@ -24,7 +24,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/container-mgmt/messaging-library/pkg/client"
-	"github.com/container-mgmt/messaging-library/pkg/client/connections/stomp"
+	"github.com/container-mgmt/messaging-library/pkg/connections/stomp"
 )
 
 var (

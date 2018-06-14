@@ -31,7 +31,12 @@ type Connection interface {
 	// connection can't be reused.
 	Close() error
 
-	// Publish / Subscribe interface
+	// Get a ConnectionBuilder for this connection
+	NewConnectionBuilder() ConnectionBuilder
+
+	// Publish a message to a topic
 	Publish(m Message, topic string) error
+
+	// Subscribe subscribes to a topic
 	Subscribe(topic string, callback func(m Message, topic string) error) error
 }

@@ -20,6 +20,8 @@ import (
 	"net"
 
 	"github.com/go-stomp/stomp"
+
+	"github.com/container-mgmt/messaging-library/pkg/client"
 )
 
 // Connection is an implementation of Connection interface
@@ -35,7 +37,7 @@ type Connection struct {
 }
 
 // Open creates a new connection to the messaging broker.
-func (c *Connection) Open() (err error) {
+func (c Connection) Open() (err error) {
 	// Calculate the address of the server, as required by the Dial methods:
 	brokerAddress := fmt.Sprintf("%s:%d", c.BrokerHost, c.BrokerPort)
 
@@ -91,6 +93,11 @@ func (c *Connection) Open() (err error) {
 
 // Close closes the connection, releasing all the resources that it uses. Once closed the
 // connection can't be reused.
-func (c *Connection) Close() (err error) {
+func (c Connection) Close() (err error) {
 	return c.connection.Disconnect()
+}
+
+// NewConnectionBuilder gets a ConnectionBuilder for this connection
+func (c Connection) NewConnectionBuilder() client.ConnectionBuilder {
+	return ConnectionBuilder{}
 }
