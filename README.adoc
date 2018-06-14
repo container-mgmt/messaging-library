@@ -1,28 +1,29 @@
-# Messaging Library
+= Messaging Library
 
-[![Go Report Card](https://goreportcard.com/badge/container-mgmt/messaging-library)](https://goreportcard.com/report/github.com/container-mgmt/messaging-library)
-[![Build Status](https://travis-ci.org/container-mgmt/messaging-library.svg?branch=master)](https://travis-ci.org/container-mgmt/messaging-library)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+image:https://travis-ci.org/container-mgmt/messaging-library.svg?branch=master["Build Status", link="https://travis-ci.org/container-mgmt/messaging-library"]
+image:https://goreportcard.com/badge/container-mgmt/messaging-library["Go Report Card", link="https://goreportcard.com/report/github.com/container-mgmt/messaging-library"]
+image:https://img.shields.io/badge/License-Apache%202.0-blue.svg["License", link="https://opensource.org/licenses/Apache-2.0"]
 
 This package provides a Go library that simplifies the implementation of
 communication patterns, like request/reply, on top of a messaging broker
 that supports queues and topics.
 
-## Building
+== Building
 
 To build the project clone the repository to your go path and run the
 `make` command.
 
 To build the example `messaging-tool` run the `make binaries` command.
 
-## Usage
+== Usage
 
-### Publish a string message to a topic
+=== Publish a string message to a topic
 
 Example:
-[send.go](/cmd/messaging-tool/send.go)
+link:/cmd/messaging-tool/send.go[send.go]
 
-``` go
+[source,go]
+----
 import (
   ...
 
@@ -54,15 +55,17 @@ import (
 
   // Publish our hello message to the "topic name" topic.
   err = c.Publish(m, "topic name")
-```
+----
 
-### Subscribe to a topic
+=== Subscribe to a topic
 
 Example:
-[receive.go](/cmd/messaging-tool/receive.go)
+link:/cmd/messaging-tool/receive.go[receive.go]
 
 
-``` go
+
+[source,go]
+----
 import (
   ...
 
@@ -105,4 +108,4 @@ func callback(m client.Message, topic string) (err error) {
   // Subscribe to the topic "topic name", and run callback function for each
   // new message.
   err = c.Subscribe("topic name", callback)
-```
+----
