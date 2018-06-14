@@ -24,7 +24,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/container-mgmt/messaging-library/pkg/client"
-	"github.com/container-mgmt/messaging-library/pkg/client/connections/stomp"
+	"github.com/container-mgmt/messaging-library/pkg/connections/stomp"
 )
 
 var (
@@ -68,6 +68,7 @@ func init() {
 func runSend(cmd *cobra.Command, args []string) {
 	var c client.Connection
 	var bodyBytes []byte
+	var err error
 
 	// Check mandatory arguments:
 	if destinationName == "" {
@@ -75,7 +76,8 @@ func runSend(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	c = &stomp.Connection{
+	// Set the clients variables before we can open it.
+	c, err = stomp.NewConnection(&stomp.ConnectionBuilder{
 		// Global options:
 		BrokerHost:   brokerHost,
 		BrokerPort:   brokerPort,
@@ -83,10 +85,18 @@ func runSend(cmd *cobra.Command, args []string) {
 		UserPassword: userPassword,
 		UseTLS:       useTLS,
 		InsecureTLS:  insecureTLS,
+	})
+	if err != nil {
+		glog.Errorf(
+			"Can't create a new connection to host '%s': %s",
+			brokerHost,
+			err.Error(),
+		)
+		return
 	}
 
 	// Connect to the messaging service:
-	err := c.Open()
+	err = c.Open()
 	if err != nil {
 		glog.Errorf(
 			"Can't connect to message broker at host '%s' and port %d: %s",
