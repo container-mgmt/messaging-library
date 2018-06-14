@@ -26,14 +26,14 @@ import (
 
 var receiveCmd = &cobra.Command{
 	Use:   "receive",
-	Short: "Receive messages from a destination",
-	Long:  "Receive messages from a destination.",
+	Short: "Receive messages from a topic",
+	Long:  "Receive messages from a topic.",
 	Run:   runReceive,
 }
 
 func callback(m client.Message, topic string) (err error) {
 	glog.Infof(
-		"Received message from destination '%s':\n%s",
+		"Received message from topic '%s':\n%s",
 		topic,
 		m.Body,
 	)
@@ -46,8 +46,8 @@ func runReceive(cmd *cobra.Command, args []string) {
 	var err error
 
 	// Check mandatory arguments:
-	if destinationName == "" {
-		glog.Errorf("The argument 'destination' is mandatory")
+	if topicName == "" {
+		glog.Errorf("The argument 'topic' is mandatory")
 		return
 	}
 
@@ -89,18 +89,18 @@ func runReceive(cmd *cobra.Command, args []string) {
 	)
 
 	// Receive messages:
-	err = c.Subscribe(destinationName, callback)
+	err = c.Subscribe(topicName, callback)
 	if err != nil {
 		glog.Errorf(
-			"Can't subscribe to destination '%s': %s",
-			destinationName,
+			"Can't subscribe to topic '%s': %s",
+			topicName,
 			err.Error(),
 		)
 		return
 	}
 	glog.Infof(
-		"Subscribed to destination '%s'",
-		destinationName,
+		"Subscribed to topic '%s'",
+		topicName,
 	)
 	return
 }
