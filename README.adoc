@@ -82,7 +82,7 @@ import (
 // published on specific topic.
 func callback(m client.Message, topic string) (err error) {
 	glog.Infof(
-		"Received message from destination '%s':\n%s",
+		"Received message from topic '%s':\n%s",
 		topic,
 		m.Body,
 	)

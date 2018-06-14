@@ -35,8 +35,8 @@ var (
 
 var sendCmd = &cobra.Command{
 	Use:   "send",
-	Short: "Sends a message to a destination",
-	Long:  "Sends a message to a destination.",
+	Short: "Sends a message to a topic",
+	Long:  "Sends a message to a topic.",
 	Run:   runSend,
 }
 
@@ -71,8 +71,8 @@ func runSend(cmd *cobra.Command, args []string) {
 	var err error
 
 	// Check mandatory arguments:
-	if destinationName == "" {
-		glog.Errorf("The argument 'destination' is mandatory")
+	if topicName == "" {
+		glog.Errorf("The argument 'topic' is mandatory")
 		return
 	}
 
@@ -116,6 +116,8 @@ func runSend(cmd *cobra.Command, args []string) {
 	// Load the message body:
 	var body string
 	if messageBody == "" {
+		glog.Info("Please insert message body:")
+
 		bodyBytes, err = ioutil.ReadAll(os.Stdin)
 		if err != nil {
 			glog.Errorf(
@@ -148,11 +150,11 @@ func runSend(cmd *cobra.Command, args []string) {
 		}
 
 		glog.Info(body)
-		err = c.Publish(m, destinationName)
+		err = c.Publish(m, topicName)
 		if err != nil {
 			glog.Errorf(
-				"Can't send message to destination '%s': %s",
-				destinationName,
+				"Can't send message to topic '%s': %s",
+				topicName,
 				err.Error(),
 			)
 			break

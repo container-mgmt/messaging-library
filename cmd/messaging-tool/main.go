@@ -26,13 +26,13 @@ import (
 
 var (
 	// Global options:
-	brokerHost      string
-	brokerPort      int
-	destinationName string
-	userName        string
-	userPassword    string
-	useTLS          bool
-	insecureTLS     bool
+	brokerHost   string
+	brokerPort   int
+	topicName    string
+	userName     string
+	userPassword string
+	useTLS       bool
+	insecureTLS  bool
 
 	// Main command:
 	rootCmd = &cobra.Command{
@@ -64,10 +64,10 @@ func init() {
 		"The port number of the message server.",
 	)
 	flags.StringVar(
-		&destinationName,
-		"destination",
+		&topicName,
+		"topic",
 		"",
-		"The name of the destination.",
+		"The name of the topic.",
 	)
 	flags.StringVar(
 		&userName,
