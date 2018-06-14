@@ -26,13 +26,13 @@ import (
 
 var (
 	// Global options:
-	brokerHost   string
-	brokerPort   int
-	destinationName    string
-	userName     string
-	userPassword string
-	useTLS       bool
-	insecureTLS  bool
+	brokerHost      string
+	brokerPort      int
+	destinationName string
+	userName        string
+	userPassword    string
+	useTLS          bool
+	insecureTLS     bool
 
 	// Main command:
 	rootCmd = &cobra.Command{

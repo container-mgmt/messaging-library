@@ -17,5 +17,6 @@ package client
 type Message struct {
 	ContentType string
 	Body        string
+	Err         error
 	ID          string
 }

@@ -31,13 +31,21 @@ var receiveCmd = &cobra.Command{
 	Run:   runReceive,
 }
 
-func callback(m client.Message, destination string) (err error) {
+func callback(message client.Message, destination string) (err error) {
+	if message.Err != nil {
+		glog.Errorf(
+			"Can't subscribe to destination '%s': %s",
+			destinationName,
+			message.Err.Error(),
+		)
+		return
+	}
+
 	glog.Infof(
 		"Received message from destination '%s':\n%s",
 		destination,
-		m.Body,
+		message.Body,
 	)
-
 	return
 }
 

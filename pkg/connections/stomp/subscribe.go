@@ -26,18 +26,16 @@ func (c *Connection) Subscribe(destination string, callback func(m client.Messag
 	// Receive messages:
 	subscription, err = c.connection.Subscribe(destination, stomp.AckAuto)
 	if err != nil {
-		// TODO: error
 		return
 	}
 
 	// Wait for messages:
 	for message := range subscription.C {
-		if message.Err != nil {
-			// TODO: error ?
-			break
-		}
-
-		callback(client.Message{Body: string(message.Body)}, destination)
+		callback(
+			client.Message{
+				Body: string(message.Body),
+				Err:  message.Err},
+			destination)
 	}
 
 	return
