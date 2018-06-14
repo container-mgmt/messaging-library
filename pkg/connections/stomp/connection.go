@@ -24,33 +24,32 @@ import (
 
 // Connection is an implementation of Connection interface
 type Connection struct {
-	// Global options:
-	BrokerHost   string
-	BrokerPort   int
-	UserName     string
-	UserPassword string
-	UseTLS       bool
-	InsecureTLS  bool
+	brokerHost   string
+	brokerPort   int
+	userName     string
+	userPassword string
+	useTLS       bool
+	insecureTLS  bool
 	connection   *stomp.Conn
 }
 
 // Open creates a new connection to the messaging broker.
 func (c *Connection) Open() (err error) {
 	// Calculate the address of the server, as required by the Dial methods:
-	brokerAddress := fmt.Sprintf("%s:%d", c.BrokerHost, c.BrokerPort)
+	brokerAddress := fmt.Sprintf("%s:%d", c.brokerHost, c.brokerPort)
 
 	// Create the socket:
 	var socket io.ReadWriteCloser
-	if c.UseTLS {
+	if c.useTLS {
 		socket, err = tls.Dial("tcp", brokerAddress, &tls.Config{
-			ServerName:         c.BrokerHost,
-			InsecureSkipVerify: c.InsecureTLS,
+			ServerName:         c.brokerHost,
+			InsecureSkipVerify: c.insecureTLS,
 		})
 		if err != nil {
 			err = fmt.Errorf(
 				"can't create TLS connection to host '%s' and port %d: %s",
-				c.BrokerHost,
-				c.BrokerPort,
+				c.brokerHost,
+				c.brokerPort,
 				err.Error(),
 			)
 			return
@@ -60,8 +59,8 @@ func (c *Connection) Open() (err error) {
 		if err != nil {
 			err = fmt.Errorf(
 				"can't create TCP connection to host '%s' and port %d: %s",
-				c.BrokerHost,
-				c.BrokerPort,
+				c.brokerHost,
+				c.brokerPort,
 				err.Error(),
 			)
 			return
@@ -70,8 +69,8 @@ func (c *Connection) Open() (err error) {
 
 	// Prepare the options:
 	var options []func(*stomp.Conn) error
-	if c.UserName != "" {
-		options = append(options, stomp.ConnOpt.Login(c.UserName, c.UserPassword))
+	if c.userName != "" {
+		options = append(options, stomp.ConnOpt.Login(c.userName, c.userPassword))
 	}
 
 	// Create the STOMP connection:
@@ -79,8 +78,8 @@ func (c *Connection) Open() (err error) {
 	if err != nil {
 		err = fmt.Errorf(
 			"can't create STOMP connection to host '%s' and port %d: %s",
-			c.BrokerHost,
-			c.BrokerPort,
+			c.brokerHost,
+			c.brokerPort,
 			err.Error(),
 		)
 		return
