@@ -14,28 +14,28 @@
 # limitations under the License.
 #
 
-# This Makefile is just a wrapper calling the 'build' script, for those used
+# This Makefile is just a wrapper calling the 'build.py' script, for those used
 # to just run 'make'.
 
 .PHONY: build
 build:
-	./build build
+	./build.py build
 
 .PHONY: binaries
 binaries:
-	./build binaries
+	./build.py binaries
 
 .PHONY: lint
 lint:
-	./build lint
+	./build.py lint
 
 .PHONY: test
 test:
-	./build test
+	./build.py test
 
 .PHONY: fmt
 fmt:
-	./build fmt
+	./build.py fmt
 
 .PHONY: clean
 clean:
