@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 // Package client contains the types and functions used to communicate with other services using
-// queues and topics.
+// queues and destinations.
 package client
 
 // Connection represents the logical connection between the program and the messaging system. This
@@ -31,9 +31,9 @@ type Connection interface {
 	// connection can't be reused.
 	Close() error
 
-	// Publish a message to a topic
-	Publish(m Message, topic string) error
+	// Publish a message to a destination
+	Publish(m Message, destination string) error
 
-	// Subscribe subscribes to a topic
-	Subscribe(topic string, callback func(m Message, topic string) error) error
+	// Subscribe subscribes to a destination
+	Subscribe(destination string, callback func(m Message, destination string) error) error
 }

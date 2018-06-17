@@ -19,12 +19,12 @@ import (
 	"github.com/container-mgmt/messaging-library/pkg/client"
 )
 
-// Subscribe subscribes to a topic
-func (c *Connection) Subscribe(topic string, callback func(m client.Message, topic string) error) (err error) {
+// Subscribe subscribes to a destination
+func (c *Connection) Subscribe(destination string, callback func(m client.Message, destination string) error) (err error) {
 	var subscription *stomp.Subscription
 
 	// Receive messages:
-	subscription, err = c.connection.Subscribe(topic, stomp.AckAuto)
+	subscription, err = c.connection.Subscribe(destination, stomp.AckAuto)
 	if err != nil {
 		// TODO: error
 		return
@@ -37,7 +37,7 @@ func (c *Connection) Subscribe(topic string, callback func(m client.Message, top
 			break
 		}
 
-		callback(client.Message{Body: string(message.Body)}, topic)
+		callback(client.Message{Body: string(message.Body)}, destination)
 	}
 
 	return

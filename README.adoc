@@ -7,7 +7,7 @@ image:https://img.shields.io/badge/License-Apache%202.0-blue.svg["License", link
 
 This package provides a Go library that simplifies the implementation of
 communication patterns, like request/reply, on top of a messaging broker
-that supports queues and topics.
+that supports queues and topics (destinations).
 
 == Building
 
@@ -18,7 +18,7 @@ To build the example `messaging-tool` run the `make binaries` command.
 
 == Usage
 
-=== Publish a string message to a topic
+=== Publish a string message to a destination (queue or topic)
 
 Example:
 link:/cmd/messaging-tool/send.go[send.go]
@@ -54,11 +54,11 @@ import (
     Body:        "Hello subscriber.",
   }
 
-  // Publish our hello message to the "topic name" topic.
-  err = c.Publish(m, "topic name")
+  // Publish our hello message to the "destination name" destination.
+  err = c.Publish(m, "destination name")
 ----
 
-=== Subscribe to a topic
+=== Subscribe to a destination (queue or topic)
 
 Example:
 link:/cmd/messaging-tool/receive.go[receive.go]
@@ -80,11 +80,11 @@ import (
 ...
 
 // we will use this function as a callback function for each new message
-// published on specific topic.
-func callback(m client.Message, topic string) (err error) {
+// published on specific destination.
+func callback(m client.Message, destination string) (err error) {
 	glog.Infof(
-		"Received message from topic '%s':\n%s",
-		topic,
+		"Received message from destination '%s':\n%s",
+		destination,
 		m.Body,
 	)
 
@@ -106,7 +106,7 @@ func callback(m client.Message, topic string) (err error) {
 
   ...
 
-  // Subscribe to the topic "topic name", and run callback function for each
+  // Subscribe to the destination "destination name", and run callback function for each
   // new message.
-  err = c.Subscribe("topic name", callback)
+  err = c.Subscribe("destination name", callback)
 ----
