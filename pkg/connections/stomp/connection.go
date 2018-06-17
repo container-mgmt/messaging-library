@@ -11,6 +11,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+// Package stomp contains an inplementation of a messaging-library/pkg/client
+// connection object used to communicate with a STOMP broker server.
+//
+// https://godoc.org/github.com/container-mgmt/messaging-library/pkg/client
 package stomp
 
 import (
