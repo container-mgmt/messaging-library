@@ -5,7 +5,11 @@
   name = "github.com/go-stomp/stomp"
   packages = [
     ".",
-    "frame"
+    "frame",
+    "server",
+    "server/client",
+    "server/queue",
+    "server/topic"
   ]
   revision = "ba860900ef3307ecfe85ca14bc4838f24cfc7126"
   version = "v2.0"
@@ -37,6 +41,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "e84c9dc4a3e37ef7e89cd9f32d2289c09a0e302ddb22eaee1b5490e6d09a0903"
+  inputs-digest = "a09229cba603c68c2bd1d5c7ba735ec777b055d92a7a2669eade04bd66264343"
   solver-name = "gps-cdcl"
   solver-version = 1
