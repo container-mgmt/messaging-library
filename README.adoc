@@ -14,7 +14,37 @@ that supports queues and topics (destinations).
 To build the project clone the repository to your go path and run the
 `make` command.
 
-To build the example `messaging-tool` run the `make binaries` command.
+To build the example `messaging-tool` and a testing broker `messaging-server`
+run the `make binaries` command.
+
+The `make binaries` command will install the binaries into `./.gopath/bin/` path
+instead of `$GOPATH/bin` or `$GOBIN`, when executing the examples below use the
+correct path (e.g. run `./.gopath/bin/messaging-server` if `./.gopath/bin` is not in
+your `$PATH`).
+
+=== Examples
+
+==== List of examples
+
+link:/cmd/messaging-tool/[messaging-tool] +
+link:/cmd/messaging-server/[messaging-server]
+
+==== Running
+
+Run `messaging-server` testing Server:
+``` Bash
+$ messaging-server serve
+```
+
+Run `messaging-tool` testing tool, and wait for incoming messages:
+``` Bash
+$ messaging-tool receive --host 127.0.0.1 --destination "hello"
+```
+
+Run `messaging-tool` testing tool, and send a messages:
+``` Bash
+$ messaging-tool send --host 127.0.0.1 --destination "hello" --body "world"
+```
 
 == Usage
 
