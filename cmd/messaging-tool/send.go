@@ -126,6 +126,7 @@ func runSend(cmd *cobra.Command, args []string) {
 			)
 			return
 		}
+		body = string(bodyBytes)
 	} else if messageBody[0] == '@' {
 		messageFile := messageBody[1:]
 		bodyBytes, err = ioutil.ReadFile(messageFile)
