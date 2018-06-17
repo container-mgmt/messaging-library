@@ -1,0 +1,27 @@
+= messaging-tool
+
+A tool that can send and receive messages using a message broker.
+
+== Building
+
+To build the example `messaging-tool` and a testing broker `messaging-server`
+run the `make binaries` command.
+
+The `make binaries` command will install the binaries into `./.gopath/bin/` path
+instead of `$GOPATH/bin` or `$GOBIN`, when executing the examples below use the
+correct path (e.g. run `./.gopath/bin/messaging-server` if `./.gopath/bin` is not in
+your `$PATH`).
+
+== Usage
+
+=== Running the examples
+
+Run `messaging-tool` testing tool, and wait for incoming messages:
+``` Bash
+$ messaging-tool receive --host 127.0.0.1 --destination "hello"
+```
+
+Run `messaging-tool` testing tool, and send a messages:
+``` Bash
+$ messaging-tool send --host 127.0.0.1 --destination "hello" --body "world"
+```

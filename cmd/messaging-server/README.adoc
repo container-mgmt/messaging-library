@@ -1,0 +1,22 @@
+= messaging-server
+
+A memory based STOMP broker for testing of the messaging library.
+
+== Building
+
+To build the example `messaging-tool` and a testing broker `messaging-server`
+run the `make binaries` command.
+
+The `make binaries` command will install the binaries into `./.gopath/bin/` path
+instead of `$GOPATH/bin` or `$GOBIN`, when executing the examples below use the
+correct path (e.g. run `./.gopath/bin/messaging-server` if `./.gopath/bin` is not in
+your `$PATH`).
+
+== Usage
+
+=== Running the examples
+
+Run `messaging-server` testing Server:
+``` Bash
+$ messaging-server serve
+```
