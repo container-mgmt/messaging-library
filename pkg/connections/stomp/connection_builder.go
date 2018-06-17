@@ -14,6 +14,8 @@ limitations under the License.
 package stomp
 
 import (
+	"github.com/go-stomp/stomp"
+
 	"github.com/container-mgmt/messaging-library/pkg/client"
 )
 
@@ -27,9 +29,18 @@ type ConnectionBuilder struct {
 	InsecureTLS  bool
 }
 
-// NewConnection builds and initiate a new connection object.
-func NewConnection(b *ConnectionBuilder) (c client.Connection, err error) {
-	c = &Connection{
+// NewConnection builds and initiate a new connection object
+func NewConnection(b *ConnectionBuilder) (connection client.Connection, err error) {
+	// Init Host and port values if found zero values.
+	if b.BrokerHost == "" {
+		b.BrokerHost = "127.0.0.1"
+	}
+	if b.BrokerPort == 0 {
+		b.BrokerPort = 61613
+	}
+
+	// Create the connection object.
+	stompConnection := &Connection{
 		brokerHost:   b.BrokerHost,
 		brokerPort:   b.BrokerPort,
 		userName:     b.UserName,
@@ -38,5 +49,9 @@ func NewConnection(b *ConnectionBuilder) (c client.Connection, err error) {
 		insecureTLS:  b.InsecureTLS,
 	}
 
+	// Init connection subscriptions.
+	stompConnection.subscriptions = make(map[string]*stomp.Subscription, 0)
+
+	connection = stompConnection
 	return
 }

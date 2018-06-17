@@ -28,13 +28,14 @@ import (
 
 // Connection is an implementation of Connection interface.
 type Connection struct {
-	brokerHost   string
-	brokerPort   int
-	userName     string
-	userPassword string
-	useTLS       bool
-	insecureTLS  bool
-	connection   *stomp.Conn
+	brokerHost    string
+	brokerPort    int
+	userName      string
+	userPassword  string
+	useTLS        bool
+	insecureTLS   bool
+	subscriptions map[string]*stomp.Subscription
+	connection    *stomp.Conn
 }
 
 // Open creates a new connection to the messaging broker.
