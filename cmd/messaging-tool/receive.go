@@ -33,10 +33,11 @@ var receiveCmd = &cobra.Command{
 
 func callback(message client.Message, destination string) (err error) {
 	if message.Err != nil {
+		err = message.Err
 		glog.Errorf(
 			"Can't subscribe to destination '%s': %s",
 			destinationName,
-			message.Err.Error(),
+			err.Error(),
 		)
 		return
 	}
