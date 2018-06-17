@@ -19,13 +19,13 @@ import (
 	"github.com/container-mgmt/messaging-library/pkg/client"
 )
 
-// Publish a message to a topic
-func (c *Connection) Publish(m client.Message, topic string) (err error) {
+// Publish a message to a destination
+func (c *Connection) Publish(m client.Message, destination string) (err error) {
 	body := []byte(m.Body)
 	contentType := m.ContentType
 
 	err = c.connection.Send(
-		topic,
+		destination,
 		contentType,
 		body,
 		stomp.SendOpt.Header("persistent", "true"),

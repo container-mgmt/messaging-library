@@ -28,7 +28,7 @@ var (
 	// Global options:
 	brokerHost   string
 	brokerPort   int
-	topicName    string
+	destinationName    string
 	userName     string
 	userPassword string
 	useTLS       bool
@@ -64,10 +64,10 @@ func init() {
 		"The port number of the message server.",
 	)
 	flags.StringVar(
-		&topicName,
-		"topic",
+		&destinationName,
+		"destination",
 		"",
-		"The name of the topic.",
+		"The name of the destination.",
 	)
 	flags.StringVar(
 		&userName,
