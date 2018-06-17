@@ -11,8 +11,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// Package client contains the types and functions used to communicate with other services using
-// queues and topics.
 package client
 
 // Message is an implementation of Message interface

@@ -2,6 +2,7 @@
 
 image:https://travis-ci.org/container-mgmt/messaging-library.svg?branch=master["Build Status", link="https://travis-ci.org/container-mgmt/messaging-library"]
 image:https://goreportcard.com/badge/container-mgmt/messaging-library["Go Report Card", link="https://goreportcard.com/report/github.com/container-mgmt/messaging-library"]
+image:https://godoc.org/github.com/container-mgmt/messaging-library/pkg/client?status.svg["GoDoc", link="https://godoc.org/github.com/container-mgmt/messaging-library/pkg/client"]
 image:https://img.shields.io/badge/License-Apache%202.0-blue.svg["License", link="https://opensource.org/licenses/Apache-2.0"]
 
 This package provides a Go library that simplifies the implementation of
