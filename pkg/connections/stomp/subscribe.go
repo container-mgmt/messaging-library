@@ -14,6 +14,8 @@ limitations under the License.
 package stomp
 
 import (
+	"fmt"
+
 	"github.com/go-stomp/stomp"
 
 	"github.com/container-mgmt/messaging-library/pkg/client"
@@ -27,11 +29,20 @@ import (
 func (c *Connection) Subscribe(destination string, callback func(m client.Message, destination string) error) (err error) {
 	var subscription *stomp.Subscription
 
+	// Check if we already subscibe to this destination,
+	// We do not allow for multiple subscriptions for one destination.
+	if _, ok := c.subscriptions[destination]; ok {
+		err = fmt.Errorf("Only one subscription per destination is allowed")
+		return
+	}
+
 	// Receive messages:
 	subscription, err = c.connection.Subscribe(destination, stomp.AckAuto)
 	if err != nil {
 		return
 	}
+
+	c.subscriptions[destination] = subscription
 
 	// Wait for messages:
 	for message := range subscription.C {
@@ -42,5 +53,18 @@ func (c *Connection) Subscribe(destination string, callback func(m client.Messag
 			destination)
 	}
 
+	return
+}
+
+// Unsubscribe unsubscribes from a destination.
+func (c *Connection) Unsubscribe(destination string) (err error) {
+	// Check if we subscribe to this destination, o/w return an error.
+	subscription, ok := c.subscriptions[destination]
+	if ok == false {
+		err = fmt.Errorf("Unsubscribe faild, no destination %s", destination)
+		return
+	}
+
+	err = subscription.Unsubscribe()
 	return
 }

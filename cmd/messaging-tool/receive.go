@@ -99,6 +99,7 @@ func runReceive(cmd *cobra.Command, args []string) {
 
 	// Receive messages:
 	err = c.Subscribe(destinationName, callback)
+	defer c.Unsubscribe(destinationName)
 	if err != nil {
 		glog.Errorf(
 			"Can't subscribe to destination '%s': %s",

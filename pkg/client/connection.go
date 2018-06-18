@@ -45,4 +45,7 @@ type Connection interface {
 	//
 	// Once a message or an error is recived, the callback function will be trigered.
 	Subscribe(destination string, callback func(m Message, destination string) error) error
+
+	// Unsubscribe unsubscribes from a destination
+	Unsubscribe(destination string) error
 }
