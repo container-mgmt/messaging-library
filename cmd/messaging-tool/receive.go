@@ -43,9 +43,9 @@ func callback(message client.Message, destination string) (err error) {
 	}
 
 	glog.Infof(
-		"Received message from destination '%s':\n%s",
+		"Received message from destination '%s':\n%v",
 		destination,
-		message.Body,
+		message.Data,
 	)
 	return
 }

@@ -14,6 +14,7 @@ limitations under the License.
 package stomp
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/go-stomp/stomp"
@@ -28,6 +29,7 @@ import (
 // Once a message or an error is recived, the callback function will be trigered.
 func (c *Connection) Subscribe(destination string, callback func(m client.Message, destination string) error) (err error) {
 	var subscription *stomp.Subscription
+	var body map[string]interface{}
 
 	// Check if we already subscibe to this destination,
 	// We do not allow for multiple subscriptions for one destination.
@@ -46,9 +48,21 @@ func (c *Connection) Subscribe(destination string, callback func(m client.Messag
 
 	// Wait for messages:
 	for message := range subscription.C {
+		// Try to unmarshal the byte array comming from the broker into a
+		// message body of type map[string]interface{}
+		err = json.Unmarshal(message.Body, &body)
+		if err != nil {
+			// Call the callback function with the json unmarshal error.
+			callback(
+				client.Message{
+					Err: err},
+				destination)
+		}
+
+		// Call the callback function.
 		callback(
 			client.Message{
-				Body: string(message.Body),
+				Data: body,
 				Err:  message.Err},
 			destination)
 	}

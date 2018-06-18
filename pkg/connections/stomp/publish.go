@@ -14,6 +14,7 @@ limitations under the License.
 package stomp
 
 import (
+	"encoding/json"
 	"github.com/go-stomp/stomp"
 
 	"github.com/container-mgmt/messaging-library/pkg/client"
@@ -23,8 +24,19 @@ import (
 // message to the specified destination. If the messaging server fails to
 // receive the message for any reason, the connection will close.
 func (c *Connection) Publish(m client.Message, destination string) (err error) {
-	body := []byte(m.Body)
+	var body []byte
+
+	// Marshal the message body (type: map[string]interface{}) into a byte array.
+	body, err = json.Marshal(m.Data)
+	if err != nil {
+		return
+	}
+
+	// Our default contentType is "application/json"
 	contentType := m.ContentType
+	if contentType == "" {
+		contentType = "application/json"
+	}
 
 	err = c.connection.Send(
 		destination,
