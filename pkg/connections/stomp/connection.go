@@ -26,7 +26,7 @@ import (
 	"github.com/go-stomp/stomp"
 )
 
-// Connection is an implementation of Connection interface
+// Connection is an implementation of Connection interface.
 type Connection struct {
 	brokerHost   string
 	brokerPort   int
