@@ -14,6 +14,12 @@ limitations under the License.
 package client
 
 // MessageData is the message payload data type.
+//
+// For example:
+//   data := client.MessageData{
+//    "kind": "InfoMessage",
+//    "spec": map[string]string{"message": body},
+//   }
 type MessageData map[string]interface{}
 
 // Message represents a message sent or received by a connection.
@@ -27,7 +33,7 @@ type Message struct {
 	Data MessageData // Content of message
 
 	// MIME content type.
-	ContentType string // MIME of the message, usually "text/plain"
+	ContentType string // MIME of the message, usually "application/json"
 
 	// Indicates whether an error was received on the subscription.
 	// The error will contain details of the error. If the server

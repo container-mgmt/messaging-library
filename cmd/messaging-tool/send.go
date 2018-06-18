@@ -45,7 +45,7 @@ func init() {
 	flags.StringVar(
 		&contentType,
 		"content-type",
-		"text/plain",
+		"application/json",
 		"The MIME type of the message body.",
 	)
 	flags.StringVar(
@@ -143,18 +143,22 @@ func runSend(cmd *cobra.Command, args []string) {
 		body = messageBody
 	}
 
+	// Inform user about the message body.
+	glog.Infof("Message: %s", body)
+
 	// Send a message:
 	for i := 0; i < messageCount; i++ {
-		data := client.MessageData{
-			"kind": "hello",
-			"spec": map[string]string{"message": body},
-		}
-
+		// Create a message with data object to send to the message broker,
+		// the data payload must be of type client.MessageData{}.
 		m := client.Message{
-			Data: data,
+			ContentType: contentType,
+			Data: client.MessageData{
+				"kind": "InfoMessage",
+				"spec": map[string]string{"message": body},
+			},
 		}
 
-		glog.Info(body)
+		// Send message to messaging broker.
 		err = c.Publish(m, destinationName)
 		if err != nil {
 			glog.Errorf(
