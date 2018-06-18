@@ -19,7 +19,11 @@ import (
 	"github.com/container-mgmt/messaging-library/pkg/client"
 )
 
-// Subscribe subscribes to a destination
+// Subscribe creates a subscription on the messaging server.
+// The subscription has a destination, and messages sent to that destination
+// will be received by this subscription.
+//
+// Once a message or an error is recived, the callback function will be trigered.
 func (c *Connection) Subscribe(destination string, callback func(m client.Message, destination string) error) (err error) {
 	var subscription *stomp.Subscription
 

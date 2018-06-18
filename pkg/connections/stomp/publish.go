@@ -19,7 +19,9 @@ import (
 	"github.com/container-mgmt/messaging-library/pkg/client"
 )
 
-// Publish a message to a destination
+// Publish sends a message to the messaging server, which in turn sends the
+// message to the specified destination. If the messaging server fails to
+// receive the message for any reason, the connection will close.
 func (c *Connection) Publish(m client.Message, destination string) (err error) {
 	body := []byte(m.Body)
 	contentType := m.ContentType

@@ -17,7 +17,7 @@ import (
 	"github.com/container-mgmt/messaging-library/pkg/client"
 )
 
-// ConnectionBuilder is a helper struct for building connections
+// ConnectionBuilder is a helper struct for building connections.
 type ConnectionBuilder struct {
 	BrokerHost   string
 	BrokerPort   int
@@ -27,7 +27,7 @@ type ConnectionBuilder struct {
 	InsecureTLS  bool
 }
 
-// NewConnection a new connection object
+// NewConnection builds and initiate a new connection object.
 func NewConnection(b *ConnectionBuilder) (c client.Connection, err error) {
 	c = &Connection{
 		brokerHost:   b.BrokerHost,

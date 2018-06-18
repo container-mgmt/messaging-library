@@ -15,7 +15,9 @@ limitations under the License.
 */
 
 // Package client contains the types and functions used to communicate with other services using
-// queues and destinations.
+// queues and topics.
+//
+// In this library we use the term destinations to describe both queues and topics.
 package client
 
 // Connection represents the logical connection between the program and the messaging system. This
@@ -27,13 +29,20 @@ package client
 type Connection interface {
 	// Open creates a new connection to the messaging broker.
 	Open() error
+
 	// Close closes the connection, releasing all the resources that it uses. Once closed the
 	// connection can't be reused.
 	Close() error
 
-	// Publish a message to a destination
+	// Publish sends a message to the messaging server, which in turn sends the
+	// message to the specified destination. If the messaging server fails to
+	// receive the message for any reason, the connection will close.
 	Publish(m Message, destination string) error
 
-	// Subscribe subscribes to a destination
+	// Subscribe creates a subscription on the messaging server.
+	// The subscription has a destination, and messages sent to that destination
+	// will be received by this subscription.
+	//
+	// Once a message or an error is recived, the callback function will be trigered.
 	Subscribe(destination string, callback func(m Message, destination string) error) error
 }

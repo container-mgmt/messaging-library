@@ -109,7 +109,7 @@ import (
 
 ...
 
-// we will use this function as a callback function for each new message
+// We will use this function as a callback function for each new message
 // published on specific destination.
 func callback(m client.Message, destination string) (err error) {
 	glog.Infof(
