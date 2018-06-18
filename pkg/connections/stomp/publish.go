@@ -46,7 +46,7 @@ func (c *Connection) Publish(m client.Message, destination string) (err error) {
 	}
 
 	// Check if we have a byteArray content, if we do, we will overide the
-	// object abstruction mechanism, and send the byteArray as a byte array.
+	// object abstraction mechanism, and send the byteArray as a byte array.
 	if _, ok := m.Data["byteArray"]; ok {
 		// Check the content of byteArray, if it's really a byte array, send it
 		// as a byte array to server.

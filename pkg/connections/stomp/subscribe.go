@@ -26,7 +26,7 @@ import (
 // The subscription has a destination, and messages sent to that destination
 // will be received by this subscription.
 //
-// Once a message or an error is recived, the callback function will be trigered.
+// Once a message or an error is received, the callback function will be trigered.
 func (c *Connection) Subscribe(destination string, callback client.SubscriptionCallback) (err error) {
 	var subscription *stomp.Subscription
 	var data client.MessageData
@@ -48,7 +48,7 @@ func (c *Connection) Subscribe(destination string, callback client.SubscriptionC
 
 	// Wait for messages:
 	for message := range subscription.C {
-		// Try to unmarshal the byte array comming from the broker into a
+		// Try to unmarshal the byte array coming from the broker into a
 		// message body of type map[string]interface{}
 		err = json.Unmarshal(message.Body, &data)
 		if err != nil {
