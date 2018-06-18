@@ -8,7 +8,9 @@ go_import_path: github.com/container-mgmt/messaging-library
 install:
 - go get github.com/golang/dep/cmd/dep
 - go get golang.org/x/lint/golint
+- go get github.com/client9/misspell/cmd/misspell
 
 script:
 - make build test lint
 - make binaries
+- misspell -error cmd/** pkg/** README.adoc
