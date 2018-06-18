@@ -14,7 +14,7 @@ limitations under the License.
 package client
 
 // MessageData is the message payload data type.
-type MessageData interface{}
+type MessageData map[string]interface{}
 
 // Message represents a message sent or received by a connection.
 // In most cases a message corresponds to a single message sent or received by

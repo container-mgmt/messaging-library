@@ -40,11 +40,6 @@ var sendCmd = &cobra.Command{
 	Run:   runSend,
 }
 
-type dataPayload struct {
-	kind string
-	spec map[string]string
-}
-
 func init() {
 	flags := sendCmd.Flags()
 	flags.StringVar(
@@ -150,9 +145,9 @@ func runSend(cmd *cobra.Command, args []string) {
 
 	// Send a message:
 	for i := 0; i < messageCount; i++ {
-		data := dataPayload{
-			kind: "InfoMessage",
-			spec: map[string]string{"message": body},
+		data := client.MessageData{
+			"kind": "hello",
+			"spec": map[string]string{"message": body},
 		}
 
 		m := client.Message{
