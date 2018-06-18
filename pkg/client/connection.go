@@ -20,6 +20,9 @@ limitations under the License.
 // In this library we use the term destinations to describe both queues and topics.
 package client
 
+// SubscriptionCallback is the callback function type used for subscription callback.
+type SubscriptionCallback func(m Message, destination string) error
+
 // Connection represents the logical connection between the program and the messaging system. This
 // logical connection may correspond to one or multiple physical connections, depending on the
 // underlying protocol and implementation.
@@ -44,7 +47,7 @@ type Connection interface {
 	// will be received by this subscription.
 	//
 	// Once a message or an error is recived, the callback function will be trigered.
-	Subscribe(destination string, callback func(m Message, destination string) error) error
+	Subscribe(destination string, callback SubscriptionCallback) error
 
 	// Unsubscribe unsubscribes from a destination
 	Unsubscribe(destination string) error
