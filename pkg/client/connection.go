@@ -42,7 +42,7 @@ type Connection interface {
 	// receive the message for any reason, the connection will close.
 	//
 	// the function check if we have a byteArray key, if we do we will overide the
-	// object abstruction mechanism, and send the byteArray to the server as is.
+	// object abstraction mechanism, and send the byteArray to the server as is.
 	// e.g.
 	//   // The next lines will send {data: message} to the server.
 	//   data := client.MessageData{
@@ -54,7 +54,7 @@ type Connection interface {
 	// The subscription has a destination, and messages sent to that destination
 	// will be received by this subscription.
 	//
-	// Once a message or an error is recived, the callback function will be trigered.
+	// Once a message or an error is received, the callback function will be trigered.
 	Subscribe(destination string, callback SubscriptionCallback) error
 
 	// Unsubscribe unsubscribes from a destination
