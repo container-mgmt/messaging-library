@@ -13,6 +13,9 @@ limitations under the License.
 
 package client
 
+// MessageData is the message payload data type.
+type MessageData interface{}
+
 // Message represents a message sent or received by a connection.
 // In most cases a message corresponds to a single message sent or received by
 // a connection. If, however, the Err field is non-nil, then the message
@@ -21,7 +24,7 @@ package client
 type Message struct {
 	// The message body, which is an a string.
 	// The ContentType indicates the format of this body.
-	Data map[string]interface{} // Content of message
+	Data MessageData // Content of message
 
 	// MIME content type.
 	ContentType string // MIME of the message, usually "text/plain"
