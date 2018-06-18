@@ -40,6 +40,14 @@ type Connection interface {
 	// Publish sends a message to the messaging server, which in turn sends the
 	// message to the specified destination. If the messaging server fails to
 	// receive the message for any reason, the connection will close.
+	//
+	// the function check if we have a byteArray key, if we do we will overide the
+	// object abstruction mechanism, and send the byteArray to the server as is.
+	// e.g.
+	//   // The next lines will send {data: message} to the server.
+	//   data := client.MessageData{
+	//     "byteArray": []byte("\"data\": \"message\""),
+	//   }
 	Publish(m Message, destination string) error
 
 	// Subscribe creates a subscription on the messaging server.

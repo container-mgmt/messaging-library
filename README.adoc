@@ -65,12 +65,6 @@ import (
   "github.com/container-mgmt/messaging-library/pkg/connections/stomp"
 )
 
-// Declare our data type, we will use it when we send the message.
-type dataPayload struct {
-  kind string
-  spec map[string]string
-}
-
 ...
 
   // Create a new connection object.
@@ -88,10 +82,10 @@ type dataPayload struct {
   messageText := "Hello world"
 
   // Create a data object to send to the message broker,
-  // a data payload can be of any type (here we use `dataPayload` type).
-  data := dataPayload{
-    kind: "InfoMessage",
-    spec: map[string]string{"message": messageText},
+  // a data payload must be of type client.MessageData{}.
+  data := client.MessageData{
+    "kind": "hello",
+    "spec": map[string]string{"message": messageText},
   }
 
   // Make a message using the data object we created.

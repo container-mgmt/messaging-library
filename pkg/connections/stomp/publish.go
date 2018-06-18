@@ -20,17 +20,24 @@ import (
 	"github.com/container-mgmt/messaging-library/pkg/client"
 )
 
+// PublishByteArray sends a byte array to the messaging server, which in turn
+// sends the message to the specified destination. If the messaging server fails to
+// receive the message for any reason, the connection will close.
+func (c *Connection) PublishByteArray(contentType string, body []byte, destination string) (err error) {
+	err = c.connection.Send(
+		destination,
+		contentType,
+		body,
+		stomp.SendOpt.Header("persistent", "true"),
+	)
+	return
+}
+
 // Publish sends a message to the messaging server, which in turn sends the
 // message to the specified destination. If the messaging server fails to
 // receive the message for any reason, the connection will close.
 func (c *Connection) Publish(m client.Message, destination string) (err error) {
 	var body []byte
-
-	// Marshal the message body (type: map[string]interface{}) into a byte array.
-	body, err = json.Marshal(m.Data)
-	if err != nil {
-		return
-	}
 
 	// Our default contentType is "application/json"
 	contentType := m.ContentType
@@ -38,12 +45,25 @@ func (c *Connection) Publish(m client.Message, destination string) (err error) {
 		contentType = "application/json"
 	}
 
-	err = c.connection.Send(
-		destination,
-		contentType,
-		body,
-		stomp.SendOpt.Header("persistent", "true"),
-	)
+	// Check if we have a byteArray content, if we do, we will overide the
+	// object abstruction mechanism, and send the byteArray as a byte array.
+	if _, ok := m.Data["byteArray"]; ok {
+		// Check the content of byteArray, if it's really a byte array, send it
+		// as a byte array to server.
+		switch m.Data["byteArray"].(type) {
+		case []byte:
+			body = m.Data["byteArray"].([]byte)
+			err = c.PublishByteArray(contentType, body, destination)
+			return
+		}
+	}
 
+	// Marshal the message body (type: client.MessageData) into a byte array.
+	body, err = json.Marshal(m.Data)
+	if err != nil {
+		return
+	}
+
+	err = c.PublishByteArray(contentType, body, destination)
 	return
 }
