@@ -78,10 +78,18 @@ import (
   err = c.Open()
   defer c.Close()
 
-  // Make a message with plain text body "Hello subscriber.".
+  // Set some text to the message.
+  messageText := "Hello world"
+
+  // Create a data object to send to the message broker,
+  // a data payload must be of type map[string]interface{}.
+  data := make(map[string]interface{}, 0)
+  data["kind"] = "InfoMessage"
+  data["spec"] = map[string]string{"message": messageText}
+
+  // Make a message using the data object we created.
   m = client.Message{
-    ContentType: "text/plain",
-    Body:        "Hello subscriber.",
+    Data:        data
   }
 
   // Publish our hello message to the "destination name" destination.
@@ -111,11 +119,13 @@ import (
 
 // We will use this function as a callback function for each new message
 // published on specific destination.
+//
+// m.Data is of type map[string]interface{}
 func callback(m client.Message, destination string) (err error) {
 	glog.Infof(
-		"Received message from destination '%s':\n%s",
+		"Received message from destination '%s':\n%v",
 		destination,
-		m.Body,
+		m.Data,
 	)
 
 	return

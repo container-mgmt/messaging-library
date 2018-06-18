@@ -21,14 +21,14 @@ package client
 type Message struct {
 	// The message body, which is an a string.
 	// The ContentType indicates the format of this body.
-	Body string // Content of message
+	Data map[string]interface{} // Content of message
 
 	// MIME content type.
 	ContentType string // MIME of the message, usually "text/plain"
 
 	// Indicates whether an error was received on the subscription.
 	// The error will contain details of the error. If the server
-	// sent an ERROR frame, then the Body, ContentType and Header fields
+	// sent an ERROR frame, then the Data, ContentType and Header fields
 	// will be populated according to the contents of the ERROR frame.
 	Err error
 }

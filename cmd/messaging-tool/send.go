@@ -145,9 +145,12 @@ func runSend(cmd *cobra.Command, args []string) {
 
 	// Send a message:
 	for i := 0; i < messageCount; i++ {
+		data := make(map[string]interface{}, 0)
+		data["kind"] = "InfoMessage"
+		data["spec"] = map[string]string{"message": body}
+
 		m := client.Message{
-			ContentType: contentType,
-			Body:        body,
+			Data: data,
 		}
 
 		glog.Info(body)
