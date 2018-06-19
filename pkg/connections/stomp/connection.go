@@ -26,7 +26,15 @@ import (
 	"github.com/go-stomp/stomp"
 )
 
-// Connection is an implementation of Connection interface.
+// Connection represents the logical connection between the program and the messaging system. This
+// logical connection may correspond to one or multiple physical connections, depending on the
+// underlying protocol and implementation.
+//
+// The connection may consume expensive resources, like TCP connections, or file descriptors, so it
+// is important to reuse it as much as possible, and to close it once it is no longer needed.
+//
+// Connection is an implementation of Connection interface:
+//   https://godoc.org/github.com/container-mgmt/messaging-library/pkg/client#Connection
 type Connection struct {
 	brokerHost    string
 	brokerPort    int
