@@ -55,7 +55,8 @@ func (c *Connection) Subscribe(destination string, callback client.SubscriptionC
 			// Call the callback function with the json unmarshal error.
 			callback(
 				client.Message{
-					Err: err},
+					Data: client.MessageData{"byteArray": message.Body},
+					Err:  err},
 				destination)
 		}
 
