@@ -29,7 +29,7 @@ type ConnectionBuilder struct {
 	InsecureTLS  bool
 }
 
-// NewConnection builds and initiate a new connection object
+// NewConnection builds and initiate a new connection object.
 //
 // Example:
 //   c, err = stomp.NewConnection(&stomp.ConnectionBuilder{
