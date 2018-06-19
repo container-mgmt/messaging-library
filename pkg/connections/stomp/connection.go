@@ -104,5 +104,11 @@ func (c *Connection) Open() (err error) {
 // Close closes the connection, releasing all the resources that it uses. Once closed the
 // connection can't be reused.
 func (c *Connection) Close() (err error) {
+	// Sanity check connection.
+	if c.connection == nil {
+		err = fmt.Errorf("Connection is closed")
+		return
+	}
+
 	return c.connection.Disconnect()
 }
