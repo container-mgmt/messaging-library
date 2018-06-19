@@ -4,13 +4,13 @@ A memory based STOMP broker for testing of the messaging library.
 
 == Building
 
-To build the example `messaging-tool` and a testing broker `messaging-server`
-run the `make binaries` command.
+Use the regular go tools to build and install the examples, or run the
+example `messaging-server`, without install:
 
-The `make binaries` command will install the binaries into `./.gopath/bin/` path
-instead of `$GOPATH/bin` or `$GOBIN`, when executing the examples below use the
-correct path (e.g. run `./.gopath/bin/messaging-server` if `./.gopath/bin` is not in
-your `$PATH`).
+``` Bash
+$ # Run demo server without installing
+$ go run cmd/messaging-server/*.go --help
+```
 
 == Usage
 
