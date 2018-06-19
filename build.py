@@ -23,8 +23,6 @@ import os.path
 import re
 import subprocess
 import sys
-import tempfile
-import urllib.request
 
 # The import path of the project:
 IMPORT_PATH = "github.com/container-mgmt/messaging-library"
@@ -106,7 +104,6 @@ def go_tool(*args):
     """
     # Make sure that the required directories exist:
     go_path = ensure_go_path()
-    project_dir = ensure_project_dir()
     project_link = ensure_project_link()
 
     # Modify the environment so that the Go tool will find the project files
@@ -198,7 +195,6 @@ def ensure_src_link(import_path, src_path):
     given import path appear in the 'GOPATH' expected by go tools. Returns the
     full path of the link.
     """
-    project_dir = ensure_project_dir()
     go_src = ensure_go_src()
     src_link = os.path.join(go_src, import_path)
     link_dir = os.path.dirname(src_link)
