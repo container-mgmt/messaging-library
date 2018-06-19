@@ -30,6 +30,24 @@ type ConnectionBuilder struct {
 }
 
 // NewConnection builds and initiate a new connection object
+//
+// Example:
+//   c, err = stomp.NewConnection(&stomp.ConnectionBuilder{
+//   	BrokerHost:   brokerHost,
+//   	BrokerPort:   brokerPort,
+//   	UserName:     userName,
+//   	UserPassword: userPassword,
+//   	UseTLS:       useTLS,
+//   	InsecureTLS:  insecureTLS,
+//   })
+//   if err != nil {
+//   	glog.Errorf(
+//   		"Can't create a new connection to host '%s': %s",
+//   		brokerHost,
+//  		err.Error(),
+//   	)
+//   	return
+//  }
 func NewConnection(b *ConnectionBuilder) (connection client.Connection, err error) {
 	// Init Host and port values if found zero values.
 	if b.BrokerHost == "" {

@@ -29,6 +29,9 @@ type SubscriptionCallback func(m Message, destination string) error
 //
 // The connection may consume expensive resources, like TCP connections, or file descriptors, so it
 // is important to reuse it as much as possible, and to close it once it is no longer needed.
+//
+// For implementation example see:
+//   https://godoc.org/github.com/container-mgmt/messaging-library/pkg/connections/stomp
 type Connection interface {
 	// Open creates a new connection to the messaging broker.
 	Open() error
