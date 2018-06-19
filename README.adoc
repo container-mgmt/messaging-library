@@ -11,16 +11,19 @@ that supports queues and topics (destinations).
 
 == Building
 
-To build the project clone the repository to your go path and run the
-`make` command.
+To build the project clone the repository to your go path, you can use the regular
+go tools to build and install the examples.
 
-To build the example `messaging-tool` and a testing broker `messaging-server`
-run the `make binaries` command.
+To run the example `messaging-tool` and a testing broker `messaging-server`,
+users can build and install, or run without installing:
 
-The `make binaries` command will install the binaries into `./.gopath/bin/` path
-instead of `$GOPATH/bin` or `$GOBIN`, when executing the examples below use the
-correct path (e.g. run `./.gopath/bin/messaging-server` if `./.gopath/bin` is not in
-your `$PATH`).
+``` Bash
+$ # Run demo server without installing
+$ go run cmd/messaging-server/*.go --help
+$
+$ # Run demo example without installing
+$ go run cmd/messaging-tool/*.go --help
+```
 
 === Examples
 
