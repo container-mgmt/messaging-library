@@ -21,6 +21,28 @@ limitations under the License.
 package client
 
 // SubscriptionCallback is the callback function type used for subscription callback.
+// The callback function is used when subscribing to a destination, it is the
+// function that will triger in the event of a message or an error frame.
+//
+// For example:
+//   func callback(message client.Message, destination string) (err error) {
+//  	if message.Err != nil {
+//  		err = message.Err
+//  		glog.Errorf(
+//  			"Received error from destination '%s': %s",
+//  			destinationName,
+//  			err.Error(),
+//  		)
+//  		return
+//  	}
+//
+//  	glog.Infof(
+//  		"Received message from destination '%s':\n%v",
+//  		destination,
+//  		message.Data,
+//  	)
+//  	return
+//  }
 type SubscriptionCallback func(m Message, destination string) error
 
 // Connection represents the logical connection between the program and the messaging system. This
@@ -40,11 +62,23 @@ type Connection interface {
 	// Publish sends a message to the messaging server, which in turn sends the
 	// message to the specified destination. If the messaging server fails to
 	// receive the message for any reason, the connection will close.
+	// e.g.
+	//   // The next lines will send a MessageData{} object to the server.
+	//   err = c.Publish(
+	//     client.Message{
+	//       Data: client.MessageData{
+	//         "some-key": "some-value",
+	//         "other-key": "other-value",
+	//       },
+	//       ContentType: "application/json", // Default is "application/json"
+	//     },
+	//     "queue-name",
+	//   )
 	//
 	// the function check if we have a byteArray key, if we do we will overide the
 	// object abstraction mechanism, and send the byteArray to the server as is.
 	// e.g.
-	//   // The next lines will send {data: message} to the server.
+	//   // The next lines will send a byte array to the server.
 	//   data := client.MessageData{
 	//     "byteArray": []byte("\"data\": \"message\""),
 	//   }

@@ -81,16 +81,13 @@ import (
   // Set some text to the message.
   messageText := "Hello world"
 
-  // Create a data object to send to the message broker,
-  // a data payload must be of type client.MessageData{}.
-  data := client.MessageData{
-    "kind": "hello",
-    "spec": map[string]string{"message": messageText},
-  }
-
-  // Make a message using the data object we created.
-  m = client.Message{
-    Data:        data
+  // Create a message with data object to send to the message broker,
+  // the data payload must be of type client.MessageData{}.
+  m := client.Message{
+    Data: client.MessageData{
+      "kind": "helloMessage",
+      "spec": map[string]string{"message": messageText},
+    },
   }
 
   // Publish our hello message to the "destination name" destination.
@@ -121,7 +118,7 @@ import (
 // We will use this function as a callback function for each new message
 // published on specific destination.
 //
-// m.Data is of type map[string]interface{}
+// m.Data is of type client.MessageData{}
 func callback(m client.Message, destination string) (err error) {
 	glog.Infof(
 		"Received message from destination '%s':\n%v",
