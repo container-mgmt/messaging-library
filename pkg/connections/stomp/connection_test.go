@@ -186,7 +186,7 @@ func BenchmarkPublishSubscribe(b *testing.B) {
 		// Send messages until callback is called
 		for {
 			select {
-			case r:= <-messagesRecieved:
+			case r := <-messagesRecieved:
 				if r == 42 {
 					break loop
 				}

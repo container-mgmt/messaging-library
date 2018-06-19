@@ -272,10 +272,13 @@ def ensure_source_files():
     """
     Returns the list of source files of the project.
     """
-    # Find all the Go files in the 'pkg' directory:
+    # Find all the Go files in the 'pkg' and 'cmd' directories:
     project_dir = ensure_project_dir()
-    pkg_dir = os.path.join(project_dir, "pkg")
-    src_files = find_paths(pkg_dir, "\\.go$")
+    src_files = []
+    for src_dir in ["pkg", "cmd"]:
+        src_dir = os.path.join(project_dir, src_dir)
+        src_paths = find_paths(src_dir, "\\.go$")
+        src_files.extend(src_paths)
 
     # Sort the paths, for predictable behaviour:
     src_files.sort()
