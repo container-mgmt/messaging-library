@@ -27,6 +27,8 @@ import (
 	"net"
 
 	"github.com/go-stomp/stomp"
+
+	"github.com/container-mgmt/messaging-library/pkg/client"
 )
 
 // Connection represents the logical connection between the program and the messaging system. This
@@ -47,6 +49,51 @@ type Connection struct {
 	insecureTLS   bool
 	subscriptions map[string]*stomp.Subscription
 	connection    *stomp.Conn
+}
+
+// NewConnection builds and initiate a new connection object.
+//
+// Example:
+//   c, err = stomp.NewConnection(&stomp.ConnectionSpec{
+//   	BrokerHost:   brokerHost,
+//   	BrokerPort:   brokerPort,
+//   	UserName:     userName,
+//   	UserPassword: userPassword,
+//   	UseTLS:       useTLS,
+//   	InsecureTLS:  insecureTLS,
+//   })
+//   if err != nil {
+//   	glog.Errorf(
+//   		"Can't create a new connection to host '%s': %s",
+//   		brokerHost,
+//  		err.Error(),
+//   	)
+//   	return
+//  }
+func NewConnection(spec *ConnectionSpec) (connection client.Connection, err error) {
+	// Init Host and port values if found zero values.
+	if spec.BrokerHost == "" {
+		spec.BrokerHost = "127.0.0.1"
+	}
+	if spec.BrokerPort == 0 {
+		spec.BrokerPort = 61613
+	}
+
+	// Create the connection object.
+	stompConnection := &Connection{
+		brokerHost:   spec.BrokerHost,
+		brokerPort:   spec.BrokerPort,
+		userName:     spec.UserName,
+		userPassword: spec.UserPassword,
+		useTLS:       spec.UseTLS,
+		insecureTLS:  spec.InsecureTLS,
+	}
+
+	// Init connection subscriptions.
+	stompConnection.subscriptions = make(map[string]*stomp.Subscription, 0)
+
+	connection = stompConnection
+	return
 }
 
 // Open creates a new connection to the messaging broker.

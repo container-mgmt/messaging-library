@@ -87,7 +87,7 @@ func TestMain(m *testing.M) {
 
 func TestNewConnection(t *testing.T) {
 	// Set the clients variables before we can open it.
-	_, err := NewConnection(&ConnectionBuilder{})
+	_, err := NewConnection(&ConnectionSpec{})
 	if err != nil {
 		t.Error("NewConnection exited with an error")
 	}
@@ -95,7 +95,7 @@ func TestNewConnection(t *testing.T) {
 
 func TestOpenAndClose(t *testing.T) {
 	// Create a connection
-	c, _ := NewConnection(&ConnectionBuilder{})
+	c, _ := NewConnection(&ConnectionSpec{})
 
 	// Try to open and close connection to server
 	err := c.Open()
@@ -107,7 +107,7 @@ func TestOpenAndClose(t *testing.T) {
 
 func TestPublish(t *testing.T) {
 	// Create and open a connection
-	c, _ := NewConnection(&ConnectionBuilder{})
+	c, _ := NewConnection(&ConnectionSpec{})
 	c.Open()
 	defer c.Close()
 
@@ -127,7 +127,7 @@ func TestPublish(t *testing.T) {
 
 func TestPublishSubscribe(t *testing.T) {
 	// Create and open a connection
-	c, _ := NewConnection(&ConnectionBuilder{})
+	c, _ := NewConnection(&ConnectionSpec{})
 	c.Open()
 	defer c.Close()
 
@@ -161,7 +161,7 @@ loop:
 
 func BenchmarkOpenAndClose(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		c, _ := NewConnection(&ConnectionBuilder{})
+		c, _ := NewConnection(&ConnectionSpec{})
 		c.Open()
 		c.Close()
 	}
@@ -169,7 +169,7 @@ func BenchmarkOpenAndClose(b *testing.B) {
 
 func BenchmarkPublishSubscribe(b *testing.B) {
 	// Create and open a connection
-	c, _ := NewConnection(&ConnectionBuilder{})
+	c, _ := NewConnection(&ConnectionSpec{})
 	c.Open()
 	defer c.Close()
 

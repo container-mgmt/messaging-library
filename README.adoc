@@ -79,7 +79,7 @@ import (
 var c client.Connection
 
 // Set a new STOMP connction to localhost:1888.
-c, err = stomp.NewConnection(&stomp.ConnectionBuilder{
+c, err = stomp.NewConnection(&stomp.ConnectionSpec{
 	BrokerHost: "localhost",
 	BrokerPort: 1888,
 })
@@ -142,7 +142,7 @@ func callback(m client.Message, destination string) (err error) {
 var c client.Connection
 
 // Set a new STOMP connction to localhost:1888.
-c, err = stomp.NewConnection(&stomp.ConnectionBuilder{
+c, err = stomp.NewConnection(&stomp.ConnectionSpec{
 	BrokerHost: "localhost",
 	BrokerPort: 1888,
 })
