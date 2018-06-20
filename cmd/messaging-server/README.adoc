@@ -17,6 +17,8 @@ your `$PATH`).
 === Running the examples
 
 Run `messaging-server` testing Server:
-``` Bash
+
+[source]
+----
 $ messaging-server serve
-```
+----

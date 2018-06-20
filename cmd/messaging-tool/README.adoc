@@ -17,11 +17,15 @@ your `$PATH`).
 === Running the examples
 
 Run `messaging-tool` testing tool, and wait for incoming messages:
-``` Bash
+
+[source]
+----
 $ messaging-tool receive --host 127.0.0.1 --destination "hello"
-```
+----
 
 Run `messaging-tool` testing tool, and send a messages:
-``` Bash
+
+[source]
+----
 $ messaging-tool send --host 127.0.0.1 --destination "hello" --body "world"
-```
+----

@@ -22,95 +22,102 @@ instead of `$GOPATH/bin` or `$GOBIN`, when executing the examples below use the
 correct path (e.g. run `./.gopath/bin/messaging-server` if `./.gopath/bin` is not in
 your `$PATH`).
 
-=== Examples
+== Examples
 
-==== List of examples
+=== List of examples
 
-link:/cmd/messaging-tool/[messaging-tool] +
+link:/cmd/messaging-tool/[messaging-tool]
+
 link:/cmd/messaging-server/[messaging-server]
 
-==== Running
+=== Running
 
 Run `messaging-server` testing Server:
-``` Bash
+
+[source]
+----
 $ messaging-server serve
-```
+----
 
 Run `messaging-tool` testing tool, and wait for incoming messages:
-``` Bash
+
+[source]
+----
 $ messaging-tool receive --host 127.0.0.1 --destination "hello"
-```
+----
 
 Run `messaging-tool` testing tool, and send a messages:
-``` Bash
+
+[source]
+----
 $ messaging-tool send --host 127.0.0.1 --destination "hello" --body "world"
-```
+----
 
 == Usage
 
 === Publish a string message to a destination (queue or topic)
 
 Example:
+
 link:/cmd/messaging-tool/send.go[send.go]
 
 [source,go]
 ----
 import (
-  ...
+	...
 
-  // Import the message broker client interface.
-  "github.com/container-mgmt/messaging-library/pkg/client"
+	// Import the message broker client interface.
+	"github.com/container-mgmt/messaging-library/pkg/client"
 
-  // Import a STOMP client implementation.
-  "github.com/container-mgmt/messaging-library/pkg/connections/stomp"
+	// Import a STOMP client implementation.
+	"github.com/container-mgmt/messaging-library/pkg/connections/stomp"
 )
 
 ...
 
-  // Create a new connection object.
-  var c client.Connection
+// Create a new connection object.
+var c client.Connection
 
-  // Set a new STOMP connction to localhost:1888.
-  c, err = stomp.NewConnection(&stomp.ConnectionBuilder{
-    BrokerHost:   "lolcalhost",
-    BrokerPort:   "1888",
-  })
-  err = c.Open()
-  defer c.Close()
+// Set a new STOMP connction to localhost:1888.
+c, err = stomp.NewConnection(&stomp.ConnectionBuilder{
+	BrokerHost: "localhost",
+	BrokerPort: 1888,
+})
+err = c.Open()
+defer c.Close()
 
-  // Set some text to the message.
-  messageText := "Hello world"
+// Set some text to the message.
+messageText := "Hello world"
 
-  // Create a message with data object to send to the message broker,
-  // the data payload must be of type client.MessageData{}.
-  m := client.Message{
-    Data: client.MessageData{
-      "kind": "helloMessage",
-      "spec": map[string]string{"message": messageText},
-    },
-  }
+// Create a message with data object to send to the message broker,
+// the data payload must be of type client.MessageData{}.
+m := client.Message{
+	Data: client.MessageData{
+		"kind": "helloMessage",
+		"spec": map[string]string{"message": messageText},
+	},
+}
 
-  // Publish our hello message to the "destination name" destination.
-  err = c.Publish(m, "destination name")
+// Publish our hello message to the "destination name" destination.
+err = c.Publish(m, "destination name")
 ----
 
 === Subscribe to a destination (queue or topic)
 
 Example:
+
 link:/cmd/messaging-tool/receive.go[receive.go]
-
-
 
 [source,go]
 ----
 import (
-  ...
+	...
 
-  // Import the message broker client interface.
-  "github.com/container-mgmt/messaging-library/pkg/client"
+	// Import the message broker client interface.
+	"github.com/container-mgmt/messaging-library/pkg/client"
 
-  // Import a STOMP client implementation.
-  "github.com/container-mgmt/messaging-library/pkg/connections/stomp"
+	// Import a STOMP client implementation.
+	"github.com/container-mgmt/messaging-library/pkg/connections/stomp"
 )
 
 ...
@@ -131,20 +138,20 @@ func callback(m client.Message, destination string) (err error) {
 
 ...
 
-  // Create a new connection object.
-  var c client.Connection
+// Create a new connection object.
+var c client.Connection
 
-  // Set a new STOMP connction to localhost:1888.
-  c, err = stomp.NewConnection(&stomp.ConnectionBuilder{
-    BrokerHost:   "lolcalhost",
-    BrokerPort:   "1888",
-  })
-  err = c.Open()
-  defer c.Close()
+// Set a new STOMP connction to localhost:1888.
+c, err = stomp.NewConnection(&stomp.ConnectionBuilder{
+	BrokerHost: "localhost",
+	BrokerPort: 1888,
+})
+err = c.Open()
+defer c.Close()
 
-  ...
+...
 
-  // Subscribe to the destination "destination name", and run callback function for each
-  // new message.
-  err = c.Subscribe("destination name", callback)
+// Subscribe to the destination "destination name", and run callback function for each
+// new message.
+err = c.Subscribe("destination name", callback)
 ----
