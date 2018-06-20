@@ -50,26 +50,28 @@ func (c *Connection) Subscribe(destination string, callback client.SubscriptionC
 	c.subscriptions[destination] = subscription
 
 	// Wait for messages:
-	for message := range subscription.C {
-		// Try to unmarshal the byte array coming from the broker into a
-		// message body of type map[string]interface{}
-		err = json.Unmarshal(message.Body, &data)
-		if err != nil {
-			// Call the callback function with the json unmarshal error.
+	go func() {
+		for message := range subscription.C {
+			// Try to unmarshal the byte array coming from the broker into a
+			// message body of type map[string]interface{}
+			err = json.Unmarshal(message.Body, &data)
+			if err != nil {
+				// Call the callback function with the json unmarshal error.
+				callback(
+					client.Message{
+						Data: client.MessageData{"byteArray": message.Body},
+						Err:  err},
+					destination)
+			}
+
+			// Call the callback function.
 			callback(
 				client.Message{
-					Data: client.MessageData{"byteArray": message.Body},
-					Err:  err},
+					Data: data,
+					Err:  message.Err},
 				destination)
 		}
-
-		// Call the callback function.
-		callback(
-			client.Message{
-				Data: data,
-				Err:  message.Err},
-			destination)
-	}
+	}()
 
 	return
 }

@@ -17,6 +17,9 @@ limitations under the License.
 package main
 
 import (
+	"os"
+	"os/signal"
+
 	"github.com/golang/glog"
 	"github.com/spf13/cobra"
 
@@ -100,6 +103,7 @@ func runReceive(cmd *cobra.Command, args []string) {
 	// Receive messages:
 	err = c.Subscribe(destinationName, callback)
 	defer c.Unsubscribe(destinationName)
+
 	if err != nil {
 		glog.Errorf(
 			"Can't subscribe to destination '%s': %s",
@@ -109,8 +113,14 @@ func runReceive(cmd *cobra.Command, args []string) {
 		return
 	}
 	glog.Infof(
-		"Subscribed to destination '%s'",
+		"Subscribed to destination '%s' (Press Ctrl-C to exit)",
 		destinationName,
 	)
+
+	// Wait for Ctrl+C.
+	waitCtrlC := make(chan os.Signal, 1)
+	signal.Notify(waitCtrlC, os.Interrupt)
+	<-waitCtrlC
+
 	return
 }

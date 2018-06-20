@@ -18,71 +18,63 @@ package stomp
 
 import (
 	"fmt"
+	"io/ioutil"
+	"log"
 	"os"
 	"testing"
-	"time"
-
-	"github.com/container-mgmt/messaging-library/pkg/client"
 
 	"github.com/go-stomp/stomp/server"
+
+	"github.com/container-mgmt/messaging-library/pkg/client"
 )
 
 //
-// Utility functions used for testing
+// Utility functions used for testing.
 //
 
-// Declare a chaneles
-var messagesRecieved chan int
-var serverStarted chan bool
-
 // ListenAndServe open a STOMP testing server on address 127.0.0.1:61613.
-func ListenAndServe() {
+func ListenAndServe(serverStarted chan bool) {
 	s := &server.Server{}
 	serverStarted <- true
 
 	err := s.ListenAndServe()
 	if err != nil {
-		fmt.Printf("Failed to open STOMP testing server %s", err.Error())
-		os.Exit(1)
+		fmt.Printf("Failed to open new STOMP testing server: %s\n", err.Error())
 	}
 }
 
-// Callback for subscribe testing
-func callback(message client.Message, destination string) (err error) {
-	err = message.Err
-
-	if val, ok := message.Data["number"]; ok {
-		messagesRecieved <- int(val.(float64))
+// Callback for subscribe testing.
+func callbackFactory(c chan float64) client.SubscriptionCallback {
+	return func(message client.Message, destination string) error {
+		if val, ok := message.Data["value"]; ok {
+			c <- val.(float64)
+		}
+		return message.Err
 	}
-	return
 }
 
 //
-// Start a STOMP server before runnig the tests
+// Start a STOMP server before runnig the tests.
 //
 
 func TestMain(m *testing.M) {
 	// Create a chanel
-	messagesRecieved = make(chan int)
-	serverStarted = make(chan bool)
+	serverStarted := make(chan bool)
+	defer close(serverStarted)
 
-	// Start a testing server on 127.0.0.1:61613
-	go ListenAndServe()
+	// Start a testing server on 127.0.0.1:61613.
+	log.SetOutput(ioutil.Discard)
+	go ListenAndServe(serverStarted)
 
-	// Wait for server to start
+	// Wait for server to start.
 	<-serverStarted
 
 	code := m.Run()
-
-	// Close channels
-	close(serverStarted)
-	close(messagesRecieved)
-
 	os.Exit(code)
 }
 
 //
-// Tests
+// Tests.
 //
 
 func TestNewConnection(t *testing.T) {
@@ -94,10 +86,10 @@ func TestNewConnection(t *testing.T) {
 }
 
 func TestOpenAndClose(t *testing.T) {
-	// Create a connection
+	// Create a connection.
 	c, _ := NewConnection(&client.ConnectionSpec{})
 
-	// Try to open and close connection to server
+	// Try to open and close connection to server.
 	err := c.Open()
 	if err != nil {
 		t.Errorf("Fail to open connection: %s", err.Error())
@@ -106,15 +98,15 @@ func TestOpenAndClose(t *testing.T) {
 }
 
 func TestPublish(t *testing.T) {
-	// Create and open a connection
+	// Create and open a connection.
 	c, _ := NewConnection(&client.ConnectionSpec{})
 	c.Open()
 	defer c.Close()
 
-	// Set a hello world message
+	// Set a hello world message.
 	m := client.Message{
 		Data: client.MessageData{
-			"number": 42,
+			"value": 42.0,
 		},
 	}
 
@@ -126,37 +118,41 @@ func TestPublish(t *testing.T) {
 }
 
 func TestPublishSubscribe(t *testing.T) {
-	// Create and open a connection
+	messageRecieved := make(chan float64)
+
+	// Create and open a connection.
 	c, _ := NewConnection(&client.ConnectionSpec{})
 	c.Open()
 	defer c.Close()
 
-	// Set a hello world message
+	// Set a hello world message.
 	m := client.Message{
 		Data: client.MessageData{
-			"number": 42,
+			"value": 42.0,
 		},
 	}
 
-	// Subscribe to the "destination name" destination.
-	go c.Subscribe("destination-name", callback)
+	fmt.Printf("Publish: %f\n", m.Data["value"])
 
-loop:
-	// Send messages until callback is called
-	for {
-		select {
-		case r := <-messagesRecieved:
-			if r == 42 {
-				break loop
-			}
-		case <-time.After(1 * time.Microsecond):
-			c.Publish(m, "destination-name")
-		}
+	// Subscribe to the "destination name" destination.
+	c.Subscribe("destination-name", callbackFactory(messageRecieved))
+	// NOTE: The testing server, does not answer to Unsubscribe
+	// We should Unsubscribe if using artimisMQ.
+	//
+	// defer c.Unsubscribe("destination-name")
+
+	c.Publish(m, "destination-name")
+
+	r := <-messageRecieved
+	if r != 42 {
+		t.Errorf("Received %f expected 42", r)
 	}
+
+	fmt.Printf("Received: %f\n", r)
 }
 
 //
-// Benchmarks
+// Benchmarks.
 //
 
 func BenchmarkOpenAndClose(b *testing.B) {
@@ -167,35 +163,42 @@ func BenchmarkOpenAndClose(b *testing.B) {
 	}
 }
 
-func BenchmarkPublishSubscribe(b *testing.B) {
-	// Create and open a connection
+func BenchmarkPublishAndSubscribe(b *testing.B) {
+	messageRecieved := make(chan float64, b.N)
+	defer close(messageRecieved)
+
+	// Create and open a connection.
 	c, _ := NewConnection(&client.ConnectionSpec{})
 	c.Open()
 	defer c.Close()
 
 	// Subscribe to the "destination name" destination.
-	go c.Subscribe("destination-name", callback)
+	c.Subscribe("destination-name", callbackFactory(messageRecieved))
+	defer c.Unsubscribe("destination-name")
 
-	// Set a hello world message
+	// Set a hello world message.
 	m := client.Message{
 		Data: client.MessageData{
-			"number": 42,
+			"value": 42.0,
 		},
 	}
 
+	// Publish b.N messages.
 	for n := 0; n < b.N; n++ {
-		fmt.Printf("Loop %d\n", n)
-	loop:
-		// Send messages until callback is called
-		for {
-			select {
-			case r := <-messagesRecieved:
-				if r == 42 {
-					break loop
-				}
-			case <-time.After(10 * time.Microsecond):
-				c.Publish(m, "destination-name")
-			}
+		c.Publish(m, "destination-name")
+	}
+
+	n := 0
+loop:
+	for r := range messageRecieved {
+		// Check response.
+		if r != 42 {
+			b.Errorf("Received %f expected 42", r)
+		}
+
+		// Exit on the b.N message.
+		if n++; n == b.N {
+			break loop
 		}
 	}
 }
