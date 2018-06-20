@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package stomp
+package client
 
 // ConnectionSpec is a helper struct for building connections.
 type ConnectionSpec struct {

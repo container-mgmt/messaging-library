@@ -61,7 +61,7 @@ func runReceive(cmd *cobra.Command, args []string) {
 	}
 
 	// Set the clients variables before we can open it.
-	c, err = stomp.NewConnection(&stomp.ConnectionSpec{
+	c, err = stomp.NewConnection(&client.ConnectionSpec{
 		// Global options:
 		BrokerHost:   brokerHost,
 		BrokerPort:   brokerPort,

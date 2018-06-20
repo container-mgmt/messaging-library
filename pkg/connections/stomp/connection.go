@@ -54,7 +54,7 @@ type Connection struct {
 // NewConnection builds and initiate a new connection object.
 //
 // Example:
-//   c, err = stomp.NewConnection(&stomp.ConnectionSpec{
+//   c, err = stomp.NewConnection(&client.ConnectionSpec{
 //   	BrokerHost:   brokerHost,
 //   	BrokerPort:   brokerPort,
 //   	UserName:     userName,
@@ -70,7 +70,7 @@ type Connection struct {
 //   	)
 //   	return
 //  }
-func NewConnection(spec *ConnectionSpec) (connection client.Connection, err error) {
+func NewConnection(spec *client.ConnectionSpec) (connection client.Connection, err error) {
 	// Init Host and port values if found zero values.
 	if spec.BrokerHost == "" {
 		spec.BrokerHost = "127.0.0.1"
