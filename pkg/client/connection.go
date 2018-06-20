@@ -93,4 +93,10 @@ type Connection interface {
 
 	// Unsubscribe unsubscribes from a destination
 	Unsubscribe(destination string) error
+
+	// Requestor API
+	NewRequestor(spec RequestorSpec) (r Requestor, err error)
+
+	// Responder API
+	NewResponder(spec ResponderSpec) (r Responder, err error)
 }
