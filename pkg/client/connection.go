@@ -55,9 +55,6 @@ type SubscriptionCallback func(m Message, destination string) error
 // For implementation example see:
 //   https://godoc.org/github.com/container-mgmt/messaging-library/pkg/connections/stomp
 type Connection interface {
-	// Open creates a new connection to the messaging broker.
-	Open() error
-
 	// Close closes the connection, releasing all the resources that it uses. Once closed the
 	// connection can't be reused.
 	Close() error

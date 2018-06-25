@@ -97,10 +97,7 @@ func TestNewConnection(t *testing.T) {
 
 func TestOpenAndClose(t *testing.T) {
 	// Create a connection.
-	c, _ := NewConnection(&client.ConnectionSpec{})
-
-	// Try to open and close connection to server.
-	err := c.Open()
+	c, err := NewConnection(&client.ConnectionSpec{})
 	if err != nil {
 		t.Errorf("Fail to open connection: %s", err.Error())
 	}
@@ -112,8 +109,10 @@ func TestPublish(t *testing.T) {
 	destination, _ := DestinationName()
 
 	// Create and open a connection.
-	c, _ := NewConnection(&client.ConnectionSpec{})
-	c.Open()
+	c, err := NewConnection(&client.ConnectionSpec{})
+	if err != nil {
+		t.Errorf("Fail to open connection: %s", err.Error())
+	}
 	defer c.Close()
 
 	// Set a hello world message.
@@ -124,7 +123,7 @@ func TestPublish(t *testing.T) {
 	}
 
 	// Publish our hello message to the "destination name" destination.
-	err := c.Publish(m, destination)
+	err = c.Publish(m, destination)
 	if err != nil {
 		t.Errorf("Fail to publish a message: %s", err.Error())
 	}
@@ -137,8 +136,10 @@ func TestPublishSubscribe(t *testing.T) {
 	// [ When using artimisMQ we can close ]  defer close(messageRecieved)
 
 	// Create and open a connection.
-	c, _ := NewConnection(&client.ConnectionSpec{})
-	c.Open()
+	c, err := NewConnection(&client.ConnectionSpec{})
+	if err != nil {
+		t.Errorf("Fail to open connection: %s", err.Error())
+	}
 	defer c.Close()
 
 	// Set a hello world message.
@@ -170,8 +171,10 @@ func TestPublishSubscribe(t *testing.T) {
 
 func BenchmarkOpenAndClose(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		c, _ := NewConnection(&client.ConnectionSpec{})
-		c.Open()
+		c, err := NewConnection(&client.ConnectionSpec{})
+		if err != nil {
+			b.Errorf("Fail to open connection: %s", err.Error())
+		}
 		c.Close()
 	}
 }
@@ -188,8 +191,10 @@ func BenchmarkPublishAndSubscribe1Kb(b *testing.B) {
 	defer close(messageRecieved)
 
 	// Create and open a connection.
-	c, _ := NewConnection(&client.ConnectionSpec{})
-	c.Open()
+	c, err := NewConnection(&client.ConnectionSpec{})
+	if err != nil {
+		b.Errorf("Fail to open connection: %s", err.Error())
+	}
 	defer c.Close()
 
 	// Subscribe to the "destination name" destination.

@@ -41,12 +41,6 @@ import (
 // Connection is an implementation of Connection interface:
 //   https://godoc.org/github.com/container-mgmt/messaging-library/pkg/client#Connection
 type Connection struct {
-	brokerHost    string
-	brokerPort    int
-	userName      string
-	userPassword  string
-	useTLS        bool
-	insecureTLS   bool
 	subscriptions map[string]*stomp.Subscription
 	connection    *stomp.Conn
 }
@@ -72,47 +66,36 @@ type Connection struct {
 //  }
 func NewConnection(spec *client.ConnectionSpec) (connection client.Connection, err error) {
 	// Init Host and port values if found zero values.
-	if spec.BrokerHost == "" {
-		spec.BrokerHost = "127.0.0.1"
+	brokerHost := spec.BrokerHost
+	if brokerHost == "" {
+		brokerHost = "127.0.0.1"
 	}
-	if spec.BrokerPort == 0 {
-		spec.BrokerPort = 61613
+	brokerPort := spec.BrokerPort
+	if brokerPort == 0 {
+		brokerPort = 61613
 	}
 
 	// Create the connection object.
-	stompConnection := &Connection{
-		brokerHost:   spec.BrokerHost,
-		brokerPort:   spec.BrokerPort,
-		userName:     spec.UserName,
-		userPassword: spec.UserPassword,
-		useTLS:       spec.UseTLS,
-		insecureTLS:  spec.InsecureTLS,
-	}
+	stompConnection := new(Connection)
 
 	// Init connection subscriptions.
 	stompConnection.subscriptions = make(map[string]*stomp.Subscription, 0)
 
-	connection = stompConnection
-	return
-}
-
-// Open creates a new connection to the messaging broker.
-func (c *Connection) Open() (err error) {
 	// Calculate the address of the server, as required by the Dial methods:
-	brokerAddress := fmt.Sprintf("%s:%d", c.brokerHost, c.brokerPort)
+	brokerAddress := fmt.Sprintf("%s:%d", brokerHost, brokerPort)
 
 	// Create the socket:
 	var socket io.ReadWriteCloser
-	if c.useTLS {
+	if spec.UseTLS {
 		socket, err = tls.Dial("tcp", brokerAddress, &tls.Config{
-			ServerName:         c.brokerHost,
-			InsecureSkipVerify: c.insecureTLS,
+			ServerName:         brokerHost,
+			InsecureSkipVerify: spec.InsecureTLS,
 		})
 		if err != nil {
 			err = fmt.Errorf(
 				"can't create TLS connection to host '%s' and port %d: %s",
-				c.brokerHost,
-				c.brokerPort,
+				brokerHost,
+				brokerPort,
 				err.Error(),
 			)
 			return
@@ -122,8 +105,8 @@ func (c *Connection) Open() (err error) {
 		if err != nil {
 			err = fmt.Errorf(
 				"can't create TCP connection to host '%s' and port %d: %s",
-				c.brokerHost,
-				c.brokerPort,
+				brokerHost,
+				brokerPort,
 				err.Error(),
 			)
 			return
@@ -132,21 +115,24 @@ func (c *Connection) Open() (err error) {
 
 	// Prepare the options:
 	var options []func(*stomp.Conn) error
-	if c.userName != "" {
-		options = append(options, stomp.ConnOpt.Login(c.userName, c.userPassword))
+	if spec.UserName != "" {
+		options = append(options, stomp.ConnOpt.Login(spec.UserName, spec.UserPassword))
 	}
 
 	// Create the STOMP connection:
-	c.connection, err = stomp.Connect(socket, options...)
+	stompConnection.connection, err = stomp.Connect(socket, options...)
 	if err != nil {
 		err = fmt.Errorf(
 			"can't create STOMP connection to host '%s' and port %d: %s",
-			c.brokerHost,
-			c.brokerPort,
+			brokerHost,
+			brokerPort,
 			err.Error(),
 		)
 		return
 	}
+
+	// Return the created connection object:
+	connection = stompConnection
 
 	return
 }

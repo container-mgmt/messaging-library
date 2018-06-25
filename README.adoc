@@ -83,7 +83,9 @@ c, err = stomp.NewConnection(&client.ConnectionSpec{
 	BrokerHost: "localhost",
 	BrokerPort: 1888,
 })
-err = c.Open()
+if err != nil {
+	...
+}
 defer c.Close()
 
 // Set some text to the message.
@@ -146,7 +148,9 @@ c, err = stomp.NewConnection(&client.ConnectionSpec{
 	BrokerHost: "localhost",
 	BrokerPort: 1888,
 })
-err = c.Open()
+if err != nil {
+	...
+}
 defer c.Close()
 
 ...
