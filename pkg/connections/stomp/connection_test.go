@@ -17,6 +17,8 @@ limitations under the License.
 package stomp
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -31,6 +33,14 @@ import (
 //
 // Utility functions used for testing.
 //
+
+// DestinationName generate a random destination name
+func DestinationName() (string, error) {
+	data := make([]byte, 10)
+	_, err := rand.Read(data)
+
+	return base64.StdEncoding.EncodeToString(data), err
+}
 
 // ListenAndServe open a STOMP testing server on address 127.0.0.1:61613.
 func ListenAndServe(serverStarted chan bool) {
@@ -98,6 +108,9 @@ func TestOpenAndClose(t *testing.T) {
 }
 
 func TestPublish(t *testing.T) {
+	// Get a unique destination for the test
+	destination, _ := DestinationName()
+
 	// Create and open a connection.
 	c, _ := NewConnection(&client.ConnectionSpec{})
 	c.Open()
@@ -111,14 +124,17 @@ func TestPublish(t *testing.T) {
 	}
 
 	// Publish our hello message to the "destination name" destination.
-	err := c.Publish(m, "destination-name")
+	err := c.Publish(m, destination)
 	if err != nil {
 		t.Errorf("Fail to publish a message: %s", err.Error())
 	}
 }
 
 func TestPublishSubscribe(t *testing.T) {
+	// Get a unique destination for the test
+	destination, _ := DestinationName()
 	messageRecieved := make(chan float64)
+	// [ When using artimisMQ we can close ]  defer close(messageRecieved)
 
 	// Create and open a connection.
 	c, _ := NewConnection(&client.ConnectionSpec{})
@@ -135,13 +151,10 @@ func TestPublishSubscribe(t *testing.T) {
 	fmt.Printf("Publish: %f\n", m.Data["value"])
 
 	// Subscribe to the "destination name" destination.
-	c.Subscribe("destination-name", callbackFactory(messageRecieved))
-	// NOTE: The testing server, does not answer to Unsubscribe
-	// We should Unsubscribe if using artimisMQ.
-	//
-	// defer c.Unsubscribe("destination-name")
+	c.Subscribe(destination, callbackFactory(messageRecieved))
+	// [ When using artimisMQ we can Unsubscribe ] defer c.Unsubscribe(destination)
 
-	c.Publish(m, "destination-name")
+	c.Publish(m, destination)
 
 	r := <-messageRecieved
 	if r != 42 {
@@ -163,7 +176,14 @@ func BenchmarkOpenAndClose(b *testing.B) {
 	}
 }
 
-func BenchmarkPublishAndSubscribe(b *testing.B) {
+func BenchmarkPublishAndSubscribe1Kb(b *testing.B) {
+	var m client.Message
+
+	// Create a 1k payload to send on the queue.
+	thousandBytes := make([]byte, 1000)
+
+	// Get a unique destination for the test.
+	destination, _ := DestinationName()
 	messageRecieved := make(chan float64, b.N)
 	defer close(messageRecieved)
 
@@ -173,27 +193,28 @@ func BenchmarkPublishAndSubscribe(b *testing.B) {
 	defer c.Close()
 
 	// Subscribe to the "destination name" destination.
-	c.Subscribe("destination-name", callbackFactory(messageRecieved))
-	defer c.Unsubscribe("destination-name")
-
-	// Set a hello world message.
-	m := client.Message{
-		Data: client.MessageData{
-			"value": 42.0,
-		},
-	}
+	c.Subscribe(destination, callbackFactory(messageRecieved))
+	defer c.Unsubscribe(destination)
 
 	// Publish b.N messages.
 	for n := 0; n < b.N; n++ {
-		c.Publish(m, "destination-name")
+		// Send a message with counter as value.
+		m = client.Message{
+			Data: client.MessageData{
+				"value":        n,
+				"bigByteArray": thousandBytes,
+			},
+		}
+
+		c.Publish(m, destination)
 	}
 
 	n := 0
 loop:
 	for r := range messageRecieved {
 		// Check response.
-		if r != 42 {
-			b.Errorf("Received %f expected 42", r)
+		if int(r) != n {
+			b.Errorf("Received %f expected %d", r, n)
 		}
 
 		// Exit on the b.N message.
