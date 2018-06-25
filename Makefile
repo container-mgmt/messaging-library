@@ -33,6 +33,11 @@ lint:
 test:
 	./build.py test
 
+# the bench command should run `go test -bench=. $SOURCE`
+.PHONY: bench
+bench:
+	./build.py bench
+
 .PHONY: fmt
 fmt:
 	./build.py fmt

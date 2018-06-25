@@ -340,6 +340,14 @@ def test():
     go_tool("go", "test", *pkg_paths)
 
 
+def bench():
+    """
+    Runs the benchmarks.
+    """
+    pkg_paths = ensure_package_paths()
+    go_tool("go", "test", "-bench=.", *pkg_paths)
+
+
 def lint():
     """
     Runs the 'golint' tool on all the source files.
@@ -383,6 +391,10 @@ def main():
     # Create the parser for the 'test' command:
     test_parser = subparsers.add_parser("test")
     test_parser.set_defaults(func=test)
+
+    # Create the parser for the 'bench' command:
+    bench_parser = subparsers.add_parser("bench")
+    bench_parser.set_defaults(func=bench)
 
     # Create the parser for the 'lint' command:
     lint_parser = subparsers.add_parser("lint")
