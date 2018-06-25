@@ -23,6 +23,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"time"
 	"testing"
 
 	"github.com/go-stomp/stomp/server"
@@ -163,6 +164,60 @@ func TestPublishSubscribe(t *testing.T) {
 	}
 
 	fmt.Printf("Received: %f\n", r)
+}
+
+func TestPublishSubscribeRunTime(t *testing.T) {
+	var m client.Message
+
+	// Run N times
+	runTimes := 1000
+	runMaxTime, _ := time.ParseDuration("1.5s")
+
+	// Get a unique destination for the test
+	destination, _ := DestinationName()
+	messageRecieved := make(chan float64)
+	// defer close(messageRecieved)
+
+	// Create a 1k payload to send on the queue.
+	thousandBytes := make([]byte, 1000)
+
+	// Create and open a connection.
+	c, err := NewConnection(&client.ConnectionSpec{})
+	if err != nil {
+		t.Errorf("Fail to open connection: %s", err.Error())
+	}
+	defer c.Close()
+
+	// Subscribe to the "destination name" destination.
+	c.Subscribe(destination, callbackFactory(messageRecieved))
+	// defer c.Unsubscribe(destination)
+
+	// Start timer
+	start := time.Now()
+
+	// Set a 1Kb message 1000 times.
+	for n:= 0; n < runTimes; n++ {
+		m = client.Message{
+			Data: client.MessageData{
+				"value": n,
+				"bigByteArray": thousandBytes,
+			},
+		}
+		c.Publish(m, destination)
+	}
+
+	for n:= 0; n < runTimes; n++ {
+		r := <-messageRecieved
+		if int(r) != n {
+			t.Errorf("Received %f expected %d", r, n)
+		}
+	}
+
+	// Check time elapsed
+	elapsed := time.Since(start)
+	if (elapsed > runMaxTime) {
+		t.Errorf("Test took %s [max is %s]", elapsed, runMaxTime)
+	}
 }
 
 //

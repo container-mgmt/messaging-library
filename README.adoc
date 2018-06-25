@@ -162,6 +162,17 @@ err = c.Subscribe("destination name", callback)
 
 === Running Tests and Benchmarks
 
+Benchmarks and Tests should be run using an external STOMP broker.
+
+Before running the Benchmarks or Tests, start a STOMP broker, for example ActiveMQ Artemis:
+
+==== Run an external ActiveMQ Artemis broker:
+
+[source]
+----
+$ artimis run
+----
+
 You can use the `make` command to run tests and benchmarks on your local computer.
 
 To run the tests, use the `make test` command.
@@ -171,17 +182,6 @@ To run the tests, use the `make test` command.
 [source]
 ----
 $ make test
-----
-
-Benchmarks should be run using an external STOMP broker.
-
-Before running the Benchmarks, start a STOMP broker, for example ActiveMQ Artemis:
-
-==== Run an external ActiveMQ Artemis broker:
-
-[source]
-----
-$ artimis run
 ----
 
 ==== Run the benchmark using the `make command`:
