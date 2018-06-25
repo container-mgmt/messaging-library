@@ -88,17 +88,6 @@ func runSend(cmd *cobra.Command, args []string) {
 	})
 	if err != nil {
 		glog.Errorf(
-			"Can't create a new connection to host '%s': %s",
-			brokerHost,
-			err.Error(),
-		)
-		return
-	}
-
-	// Connect to the messaging service:
-	err = c.Open()
-	if err != nil {
-		glog.Errorf(
 			"Can't connect to message broker at host '%s' and port %d: %s",
 			brokerHost,
 			brokerPort,
