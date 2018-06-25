@@ -221,22 +221,10 @@ def ensure_vendor_dir():
     Creates and populates the 'vendor' directory if it doesn't exist yet.
     Returns the full path of the directory.
     """
-    # Create and populate the vendor director if it doesn't exist:
     project_link = ensure_project_link()
     vendor_dir = os.path.join(project_link, "vendor")
     if not os.path.exists(vendor_dir):
         go_tool("dep", "ensure", "--vendor-only", "-v")
-
-    # In order to compile the code of third party tools, like the Kubernetes
-    # code generators, we need to have the vendor directory in one of the
-    # ancestor of the directory that contains that code. A good way to solve
-    # that is to create a link in the Go source directory, as it is an ancestor
-    # of any package.
-    go_src = ensure_go_src()
-    vendor_link = os.path.join(go_src, "vendor")
-    if not os.path.exists(vendor_link):
-        os.symlink(vendor_dir, vendor_link)
-
     return vendor_dir
 
 
