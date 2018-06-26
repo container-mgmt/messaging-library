@@ -23,8 +23,8 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"time"
 	"testing"
+	"time"
 
 	"github.com/go-stomp/stomp/server"
 
@@ -196,17 +196,17 @@ func TestPublishSubscribeRunTime(t *testing.T) {
 	start := time.Now()
 
 	// Set a 1Kb message 1000 times.
-	for n:= 0; n < runTimes; n++ {
+	for n := 0; n < runTimes; n++ {
 		m = client.Message{
 			Data: client.MessageData{
-				"value": n,
+				"value":        n,
 				"bigByteArray": thousandBytes,
 			},
 		}
 		c.Publish(m, destination)
 	}
 
-	for n:= 0; n < runTimes; n++ {
+	for n := 0; n < runTimes; n++ {
 		r := <-messageRecieved
 		if int(r) != n {
 			t.Errorf("Received %f expected %d", r, n)
@@ -215,7 +215,7 @@ func TestPublishSubscribeRunTime(t *testing.T) {
 
 	// Check time elapsed
 	elapsed := time.Since(start)
-	if (elapsed > runMaxTime) {
+	if elapsed > runMaxTime {
 		t.Errorf("Test took %s [max is %s]", elapsed, runMaxTime)
 	}
 }

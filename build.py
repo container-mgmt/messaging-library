@@ -353,7 +353,7 @@ def lint():
     Runs the 'golint' tool on all the source files.
     """
     pkg_paths = ensure_package_paths()
-    go_tool("golint", "-min_confidence", "0.9", *pkg_paths)
+    go_tool("golint", "-min_confidence", "0.9", "-set_exit_status", *pkg_paths)
 
 
 def fmt():
