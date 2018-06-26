@@ -21,7 +21,9 @@ install:
 - $HOME/artemis/instance/bin/artemis-service start
 
 script:
-- make build test lint
+- if [ $(gofmt -s -l ./pkg/ ./cmd/ | wc -l) -eq 0 ]; then true; else false; fi;
+- make lint
+- make build test
 - make binaries
 - misspell -error cmd/** pkg/** README.adoc
 - make bench
