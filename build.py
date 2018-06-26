@@ -333,12 +333,8 @@ def lint():
     """
     Runs the 'golint' tool on all the source files.
     """
-    go_tool(
-        "golint",
-        "-min_confidence", "0.9",
-        "-set_exit_status",
-        "./pkg/...",
-        "./cmd/...")
+    go_tool("golint", "-set_exit_status", "./pkg/...")
+    go_tool("golint", "-set_exit_status", "./cmd/...")
 
 
 def fmt():
