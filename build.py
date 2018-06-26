@@ -252,25 +252,6 @@ def ensure_package_paths():
 
 
 @cache
-def ensure_source_files():
-    """
-    Returns the list of source files of the project.
-    """
-    # Find all the Go files in the 'pkg' and 'cmd' directories:
-    project_dir = ensure_project_dir()
-    src_files = []
-    for src_dir in ["pkg", "cmd"]:
-        src_dir = os.path.join(project_dir, src_dir)
-        src_paths = find_paths(src_dir, "\\.go$")
-        src_files.extend(src_paths)
-
-    # Sort the paths, for predictable behaviour:
-    src_files.sort()
-
-    return src_files
-
-
-@cache
 def ensure_packages():
     """
     Builds all the packages of the project.
@@ -352,16 +333,19 @@ def lint():
     """
     Runs the 'golint' tool on all the source files.
     """
-    pkg_paths = ensure_package_paths()
-    go_tool("golint", "-min_confidence", "0.9", "-set_exit_status", *pkg_paths)
+    go_tool(
+        "golint",
+        "-min_confidence", "0.9",
+        "-set_exit_status",
+        "./pkg/...",
+        "./cmd/...")
 
 
 def fmt():
     """
     Formats all the source files of the project using the 'gofmt' tool.
     """
-    src_files = ensure_source_files()
-    go_tool("gofmt", "-s", "-l", "-w", *src_files)
+    go_tool("gofmt", "-s", "-l", "-w", "./pkg/", "./cmd/")
 
 
 def main():
