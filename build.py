@@ -20,7 +20,6 @@
 import argparse
 import os
 import os.path
-import re
 import subprocess
 import sys
 
@@ -72,27 +71,6 @@ def cache(function):
             cache[key] = value
         return value
     return helper
-
-
-def find_paths(base, include=None, exclude=None):
-    """
-    Recursively finds the paths inside the 'base' directory whose complete
-    names match the 'include' regular expression and don't match the 'exclude'
-    regular expression. By default all paths are included and no path is
-    excluded.
-    """
-    include_re = re.compile(include) if include else None
-    exclude_re = re.compile(exclude) if exclude else None
-    paths = []
-    for root, _, names in os.walk(base):
-        for name in names:
-            path = os.path.join(root, name)
-            path = os.path.abspath(path)
-            should_include = include_re and include_re.search(path)
-            should_exclude = exclude_re and exclude_re.search(path)
-            if should_include and not should_exclude:
-                paths.append(path)
-    return paths
 
 
 def go_tool(*args):
