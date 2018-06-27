@@ -17,6 +17,8 @@
 # limitations under the License.
 #
 
+""" build.py build script """
+
 import argparse
 import os
 import os.path
@@ -39,11 +41,12 @@ PROJECT_VERSION = "0.0.0"
 # It will execute 'dep ensure -v' inside the go environment but it will not
 # parse or process the 'ensure' and '-v' options.
 DIRECT_TOOLS = [
-  "dep",
-  "go",
+    "dep",
+    "go",
 ]
 
 # The values extracted from the command line:
+# pylint: disable=invalid-name
 argv = None
 
 
@@ -61,14 +64,17 @@ def cache(function):
     when the function is called the second time the result will be returned
     from the cache without actually executing it.
     """
-    cache = dict()
+    cache_dict = dict()
 
     def helper(*key):
-        if key in cache:
-            value = cache[key]
+        """
+        The decorated funtion to return.
+        """
+        if key in cache_dict:
+            value = cache_dict[key]
         else:
             value = function(*key)
-            cache[key] = value
+            cache_dict[key] = value
         return value
     return helper
 
@@ -109,6 +115,9 @@ def go_tool(*args):
 
 @cache
 def ensure_project_dir():
+    """
+    Returns the project directory.
+    """
     say("Calculating project directory")
     return os.path.dirname(os.path.realpath(__file__))
 
@@ -323,6 +332,12 @@ def fmt():
 
 
 def main():
+    """
+    Parse command line argumanets and run the builder.
+    """
+    # pylint: disable=global-statement
+    global argv
+
     # Create the top level command line parser:
     parser = argparse.ArgumentParser(
         prog=os.path.basename(sys.argv[0]),
@@ -368,10 +383,9 @@ def main():
 
     # Run the selected tool:
     code = 0
-    if len(sys.argv) > 0 and sys.argv[1] in DIRECT_TOOLS:
+    if sys.argv and sys.argv[1] in DIRECT_TOOLS:
         go_tool(*sys.argv[1:])
     else:
-        global argv
         argv = parser.parse_args()
         if not hasattr(argv, "func"):
             parser.print_usage()
