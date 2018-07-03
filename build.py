@@ -382,18 +382,18 @@ def main():
     binaries_parser.set_defaults(func=build_binaries)
 
     # Run the selected tool:
-    code = 0
-    if sys.argv and sys.argv[1] in DIRECT_TOOLS:
-        go_tool(*sys.argv[1:])
+    args = sys.argv[1:]
+    if args and args[0] in DIRECT_TOOLS:
+        go_tool(*args)
     else:
         argv = parser.parse_args()
         if not hasattr(argv, "func"):
             parser.print_usage()
-            code = 1
+            sys.exit(1)
         argv.func()
 
     # Bye:
-    sys.exit(code)
+    sys.exit(0)
 
 
 if __name__ == "__main__":
