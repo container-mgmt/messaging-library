@@ -35,7 +35,10 @@ import (
 // Utility functions used for testing.
 //
 
-// DestinationName generate a random destination name
+// We are using the internal server to run the tests.
+var UseInternalServer = true
+
+// DestinationName generate a random destination name.
 func DestinationName() (string, error) {
 	data := make([]byte, 10)
 	_, err := rand.Read(data)
@@ -48,9 +51,16 @@ func ListenAndServe(serverStarted chan bool) {
 	s := &server.Server{}
 	serverStarted <- true
 
+	fmt.Println("Starting a new STOMP testing server.")
+
 	err := s.ListenAndServe()
 	if err != nil {
 		fmt.Printf("Failed to open new STOMP testing server: %s\n", err.Error())
+
+		// We assume that the reason we can't open the internal server is because
+		// we have an extrenal one running.
+		fmt.Println("Continue, falling back to external server.")
+		UseInternalServer = false
 	}
 }
 
@@ -106,7 +116,7 @@ func TestOpenAndClose(t *testing.T) {
 }
 
 func TestPublish(t *testing.T) {
-	// Get a unique destination for the test
+	// Get a unique destination for the test.
 	destination, _ := DestinationName()
 
 	// Create and open a connection.
@@ -131,7 +141,9 @@ func TestPublish(t *testing.T) {
 }
 
 func TestPublishSubscribe(t *testing.T) {
-	// Get a unique destination for the test
+	contentType := "application/json"
+
+	// Get a unique destination for the test.
 	destination, _ := DestinationName()
 	messageRecieved := make(chan float64)
 	// [ When using artimisMQ we can close ]  defer close(messageRecieved)
@@ -145,12 +157,11 @@ func TestPublishSubscribe(t *testing.T) {
 
 	// Set a hello world message.
 	m := client.Message{
+		ContentType: contentType,
 		Data: client.MessageData{
 			"value": 42.0,
 		},
 	}
-
-	fmt.Printf("Publish: %f\n", m.Data["value"])
 
 	// Subscribe to the "destination name" destination.
 	c.Subscribe(destination, callbackFactory(messageRecieved))
@@ -162,12 +173,15 @@ func TestPublishSubscribe(t *testing.T) {
 	if r != 42 {
 		t.Errorf("Received %f expected 42", r)
 	}
-
-	fmt.Printf("Received: %f\n", r)
 }
 
 func TestPublishSubscribeRunTime(t *testing.T) {
 	var m client.Message
+
+	// This test can only run on external server.
+	if UseInternalServer {
+		t.Skip("skipping test when running using internal server.")
+	}
 
 	// Run N times
 	runTimes := 1000
