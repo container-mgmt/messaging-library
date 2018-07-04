@@ -34,12 +34,11 @@ var receiveCmd = &cobra.Command{
 func callback(message client.Message, destination string) (err error) {
 	if message.Err != nil {
 		err = message.Err
-		glog.Errorf(
+		glog.Fatalf(
 			"Received error from destination '%s': %s",
 			destinationName,
 			err.Error(),
 		)
-		return
 	}
 
 	glog.Infof(
