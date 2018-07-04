@@ -1,0 +1,31 @@
+= messaging-tool
+
+A tool that can send and receive messages using a message broker.
+
+== Building
+
+To build the example `request-tool` and a testing broker `messaging-server`
+run the `make binaries` command.
+
+The `make binaries` command will install the binaries into `./.gopath/bin/` path
+instead of `$GOPATH/bin` or `$GOBIN`, when executing the examples below use the
+correct path (e.g. run `./.gopath/bin/messaging-server` if `./.gopath/bin` is not in
+your `$PATH`).
+
+== Usage
+
+=== Running the examples
+
+Run `request-tool` testing tool, and start the request echo-server:
+
+[source]
+----
+$ request-tool respond --host 127.0.0.1 --requests-queue "requests"
+----
+
+Run `request-tool` testing tool, and send a request:
+
+[source]
+----
+$ request-tool send --host 127.0.0.1 --requests-queue "requests" --responses-queue "response1" --body "my request"
+----
