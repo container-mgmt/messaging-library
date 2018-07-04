@@ -105,10 +105,6 @@ func runReceive(cmd *cobra.Command, args []string) {
 
 	// wait for messages
 	done := make(chan bool, 1)
-	go func() {
-		for {
-		}
-	}()
 	<-done
 
 	return
