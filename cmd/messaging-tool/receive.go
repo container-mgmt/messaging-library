@@ -17,9 +17,6 @@ limitations under the License.
 package main
 
 import (
-	"os"
-	"os/signal"
-
 	"github.com/golang/glog"
 	"github.com/spf13/cobra"
 
@@ -37,12 +34,11 @@ var receiveCmd = &cobra.Command{
 func callback(message client.Message, destination string) (err error) {
 	if message.Err != nil {
 		err = message.Err
-		glog.Errorf(
+		glog.Fatalf(
 			"Received error from destination '%s': %s",
 			destinationName,
 			err.Error(),
 		)
-		return
 	}
 
 	glog.Infof(
@@ -106,10 +102,9 @@ func runReceive(cmd *cobra.Command, args []string) {
 		destinationName,
 	)
 
-	// Wait for Ctrl+C.
-	waitCtrlC := make(chan os.Signal, 1)
-	signal.Notify(waitCtrlC, os.Interrupt)
-	<-waitCtrlC
+	// wait for messages
+	done := make(chan bool, 1)
+	<-done
 
 	return
 }
