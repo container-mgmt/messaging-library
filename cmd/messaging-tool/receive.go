@@ -17,9 +17,6 @@ limitations under the License.
 package main
 
 import (
-	"os"
-	"os/signal"
-
 	"github.com/golang/glog"
 	"github.com/spf13/cobra"
 
@@ -106,10 +103,13 @@ func runReceive(cmd *cobra.Command, args []string) {
 		destinationName,
 	)
 
-	// Wait for Ctrl+C.
-	waitCtrlC := make(chan os.Signal, 1)
-	signal.Notify(waitCtrlC, os.Interrupt)
-	<-waitCtrlC
+	// wait for messages
+	done := make(chan bool, 1)
+	go func() {
+		for {
+		}
+	}()
+	<-done
 
 	return
 }
