@@ -30,6 +30,8 @@ link:/cmd/messaging-tool/[messaging-tool]
 
 link:/cmd/messaging-server/[messaging-server]
 
+link:/cmd/request-tool/[request-tool]
+
 === Running
 
 Run `messaging-server` testing Server:
@@ -51,6 +53,20 @@ Run `messaging-tool` testing tool, and send a messages:
 [source]
 ----
 $ messaging-tool send --host 127.0.0.1 --destination "hello" --body "world"
+----
+
+Run `request-tool` testing tool, and start the request echo-server:
+
+[source]
+----
+$ request-tool respond --host 127.0.0.1 --requests-queue "requests"
+----
+
+Run `request-tool` testing tool, and send a request:
+
+[source]
+----
+$ request-tool send --host 127.0.0.1 --requests-queue "requests" --responses-queue "response1" --body "my request"
 ----
 
 == Usage
@@ -159,6 +175,157 @@ defer c.Close()
 // new message.
 err = c.Subscribe("destination name", callback)
 ----
+
+
+=== Create a responder on a queue
+
+Example:
+
+link:/cmd/request-tool/respond.go[respond.go]
+
+[source,go]
+----
+import (
+	...
+
+	// Import the message broker client interface.
+	"github.com/container-mgmt/messaging-library/pkg/client"
+
+	// Import a STOMP client implementation.
+	"github.com/container-mgmt/messaging-library/pkg/connections/stomp"
+)
+
+...
+
+// We will use this function as a callback function for each new reqquest
+// received on the queue.
+//
+// request.Data is of type client.MessageData{}
+func requestHandler(request client.Message) (response client.Message, err error) {
+	glog.Infof(
+		"Received request:\n%v",
+		request.Data,
+	)
+
+	return
+}
+
+...
+
+// Create a new connection object.
+var c client.Connection
+
+// Set a new STOMP connction to localhost:1888.
+c, err = stomp.NewConnection(&client.ConnectionSpec{
+	BrokerHost: "localhost",
+	BrokerPort: 1888,
+})
+if err != nil {
+	...
+}
+defer c.Close()
+
+...
+
+// Create a responder on the responses queue
+r, err := c.NewResponder(
+	client.ResponderSpec{
+		RequestsQueue: "requests-queue",
+		Callback:      requestHandler,
+	})
+
+if err != nil {
+	...
+}
+
+defer r.Close()
+...
+----
+
+
+=== Create a requestor that sends requests to a queue
+
+Example:
+
+link:/cmd/request-tool/request.go[request.go]
+
+[source,go]
+----
+import (
+	...
+
+	// Import the message broker client interface.
+	"github.com/container-mgmt/messaging-library/pkg/client"
+
+	// Import a STOMP client implementation.
+	"github.com/container-mgmt/messaging-library/pkg/connections/stomp"
+)
+
+...
+
+// We will use this function as a callback function a response
+// received on the responses queue.
+//
+// response.Data is of type client.MessageData{}
+func responseHandler(response client.Message, requestID string) (err error) {
+	glog.Infof(
+		"Received response for request id: %s:\n%v",
+		requestID,
+		response.Data,
+	)
+
+	return
+}
+
+...
+
+// Create a new connection object.
+var c client.Connection
+
+// Set a new STOMP connction to localhost:1888.
+c, err = stomp.NewConnection(&client.ConnectionSpec{
+	BrokerHost: "localhost",
+	BrokerPort: 1888,
+})
+if err != nil {
+	...
+}
+defer c.Close()
+
+...
+
+// Create a requestor that sends requests to the requests-queue
+// and receives responses on the responses queue
+r, err := c.NewRequestor(
+	client.RequestorSpec{
+		RequestsQueue:  "requests-queue",
+		ResponsesQueue: "responses-queue",
+	})
+
+if err != nil {
+	...
+}
+
+defer r.Close()
+...
+
+// Send a request:
+// Message data is a map [string]interface and can be populated
+// with any data of that structure
+request := client.Message{
+	ContentType: contentType,
+	Data: client.MessageData{
+		"kind": "Request",
+		"message": "this is my request"},
+	},
+}
+
+// Send the request, and set the handler for the response
+r.Send(m, responseHandler)
+
+
+----
+
 
 === Running Tests and Benchmarks
 

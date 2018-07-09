@@ -27,6 +27,12 @@
   version = "v1.0"
 
 [[projects]]
+  name = "github.com/segmentio/ksuid"
+  packages = ["."]
+  revision = "112f929a3020abfcd06b77c963ec919130796a35"
+  version = "1.0.1"
+
+[[projects]]
   name = "github.com/spf13/cobra"
   packages = ["."]
   revision = "ef82de70bb3f60c65fb8eebacbb2d122ef517385"
@@ -41,6 +47,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a09229cba603c68c2bd1d5c7ba735ec777b055d92a7a2669eade04bd66264343"
+  inputs-digest = "d291ae932b1038b48eafaa1d3bec15696bc9e8cd4930ddea2809e66c42271430"
   solver-name = "gps-cdcl"
   solver-version = 1
